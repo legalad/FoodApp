@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">FoodApp</string>
+    <string name="bottom_bar_pantry_description">your pantry</string>
+    <string name="bottom_bar_recipes_description">your pantry</string>
+    <string name="bottom_bar_calendar_description">your pantry</string>
+    <string name="bottom_bar_shop_list_description">your pantry</string>
+</resources>
