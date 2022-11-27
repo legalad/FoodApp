@@ -23,9 +23,8 @@ enum class NavigationItem(
 @Composable
 fun FoodAppNavigationBar() {
     var selectedItem by remember { mutableStateOf(0) }
-    val items2: List<NavigationItem> = listOf(NavigationItem.PANTRY, NavigationItem.RECIPES, NavigationItem.CALENDAR, NavigationItem.SHOP_LIST)
     NavigationBar() {
-        items2.forEachIndexed { index, item ->
+        NavigationItem.values().forEachIndexed { index, item ->
             NavigationBarItem(
                 icon = {Icon(
                     painter = painterResource(id = item.painterId),

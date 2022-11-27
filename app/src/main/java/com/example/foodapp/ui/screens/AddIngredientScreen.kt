@@ -32,9 +32,8 @@ enum class IngredientTypes (@DrawableRes val iconId: Int) {
 @Composable
 fun IngredientTypeTabRow() {
     var selectedItem by remember { mutableStateOf(0)}
-    val types = IngredientTypes.values()
     ScrollableTabRow(selectedTabIndex = selectedItem) {
-        types.forEachIndexed { index, ingredientTypesItem ->
+        IngredientTypes.values().forEachIndexed { index, ingredientTypesItem ->
             Tab(selected = selectedItem == index,
                 onClick = { selectedItem = index },
                 icon = { Icon(painter = painterResource(id = ingredientTypesItem.iconId), contentDescription = "", tint = Color.Unspecified)},
@@ -60,9 +59,13 @@ fun IngredientItem(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun AddIngredientScreen() {
-    Column (modifier = Modifier.fillMaxSize()) {
-        SearchTextField(onStartValue = "test", onValueChange = {}, modifier = Modifier.fillMaxWidth())
+fun AddIngredientScreen(modifier: Modifier = Modifier) {
+    Column (modifier = modifier.fillMaxSize()) {
+        SearchTextField(
+            onStartValue = "test",
+            onValueChange = {},
+            modifier = Modifier.fillMaxWidth(),
+            label = {Text(text = "Add ingredient")})
         IngredientTypeTabRow()
         LazyColumn (modifier = Modifier.fillMaxWidth()){
             items(20) { ingredient ->
