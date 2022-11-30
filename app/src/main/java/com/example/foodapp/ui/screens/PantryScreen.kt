@@ -56,7 +56,7 @@ fun Pantry() {
                 PantryType(IngredientTypes.FRUITS, true)
             }
             item {
-                PantryType(ingredientTypes = IngredientTypes.CANDY, true)
+                PantryType(ingredientTypes = IngredientTypes.CANDIES, true)
             }
             item {
                 PantryType(ingredientTypes = IngredientTypes.DAIRY, false)
