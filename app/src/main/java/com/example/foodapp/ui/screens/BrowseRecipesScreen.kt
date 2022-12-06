@@ -25,7 +25,8 @@ fun BrowseRecipesScreen() {
             onStartValue = "test",
             onValueChange = {},
             label = { Text(text = "Search recipes") },
-            modifier = Modifier.fillMaxWidth())
+            modifier = Modifier.fillMaxWidth(),
+        onCancelClicked = {})
         RecipesList()
     }
 }

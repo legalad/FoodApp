@@ -1,6 +1,8 @@
 package com.example.foodapp.ui.screens
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -69,13 +71,24 @@ fun IngredientItem(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun AddIngredientScreen(modifier: Modifier = Modifier) {
     var selectedTab by rememberSaveable { mutableStateOf(IngredientTypes.VEGETABLES) }
+    var input by rememberSaveable { mutableStateOf("")}
+    var hideKeyboard by rememberSaveable{ mutableStateOf(false) }
 
-    Column (modifier = modifier.fillMaxSize()) {
+
+    Column (modifier = modifier.fillMaxSize().clickable(indication = null, interactionSource = remember { MutableInteractionSource() }) { hideKeyboard = true }) {
         SearchTextField(
-            onStartValue = "test",
-            onValueChange = {},
+            onStartValue = input,
+            onValueChange = {
+                input = it
+                            },
             modifier = Modifier.fillMaxWidth(),
-            label = {Text(text = "Add ingredient")})
+            label = {Text(text = "Add ingredient")},
+            hideKeyboard = hideKeyboard,
+            onFocusClear = { hideKeyboard = false },
+            onCancelClicked = {
+                input = input.drop(input.length)
+            }
+        )
         var selectedItem by remember { mutableStateOf(0)}
         ScrollableTabRow(selectedTabIndex = selectedItem) {
             IngredientTypes.values().forEachIndexed { index, ingredientTypesItem ->

@@ -29,7 +29,7 @@ enum class NavigationItem(
 
 @Composable
 fun FoodAppNavigationBar(navHostController: NavHostController) {
-    var selectedItem by remember { mutableStateOf(0) }
+    var selectedItem by remember { mutableStateOf(1) }
     NavigationBar() {
         NavigationItem.values().forEachIndexed { index, item ->
             NavigationBarItem(

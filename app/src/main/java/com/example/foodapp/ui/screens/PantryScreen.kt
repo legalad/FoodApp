@@ -27,7 +27,7 @@ fun PantryScreen() {
             onStartValue = "test",
             onValueChange = {},
             label = { Text(text = "Search ingredient")},
-            modifier = Modifier.fillMaxWidth())
+            modifier = Modifier.fillMaxWidth(), onCancelClicked = {})
         Pantry()
     }
 }
