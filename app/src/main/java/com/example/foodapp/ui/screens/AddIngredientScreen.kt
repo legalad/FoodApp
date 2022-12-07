@@ -8,25 +8,27 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.foodapp.R
 import com.example.foodapp.model.emuns.*
 import com.example.foodapp.ui.components.SearchTextField
+import com.example.foodapp.ui.viewModel.AddIngredientViewModel
 
 
-enum class IngredientTypes (
+enum class IngredientTypes(
     @DrawableRes val iconId: Int,
     val names: IngredientSpecificType
-    ) {
+) {
     VEGETABLES(
         R.drawable.icons8_group_of_vegetables_50,
-        Vegetables.POTATO),
+        Vegetables.POTATO
+    ),
     FRUITS(R.drawable.icons8_group_of_fruits_50, Fruits.APPLE),
     MEATS(R.drawable.icons8_steak_50, Meats.PORK),
     DAIRY(R.drawable.icons8_milk_bottle_50, Dairy.YOGHURT),
@@ -41,12 +43,18 @@ enum class IngredientTypes (
 
 @Composable
 fun IngredientTypeTabRow() {
-    var selectedItem by remember { mutableStateOf(0)}
+    var selectedItem by remember { mutableStateOf(0) }
     ScrollableTabRow(selectedTabIndex = selectedItem) {
         IngredientTypes.values().forEachIndexed { index, ingredientTypesItem ->
             Tab(selected = selectedItem == index,
                 onClick = { selectedItem = index },
-                icon = { Icon(painter = painterResource(id = ingredientTypesItem.iconId), contentDescription = "", tint = Color.Unspecified)},
+                icon = {
+                    Icon(
+                        painter = painterResource(id = ingredientTypesItem.iconId),
+                        contentDescription = "",
+                        tint = Color.Unspecified
+                    )
+                },
                 text = { Text(text = ingredientTypesItem.name) })
         }
     }
@@ -69,40 +77,49 @@ fun IngredientItem(name: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun AddIngredientScreen(modifier: Modifier = Modifier) {
-    var selectedTab by rememberSaveable { mutableStateOf(IngredientTypes.VEGETABLES) }
-    var input by rememberSaveable { mutableStateOf("")}
-    var hideKeyboard by rememberSaveable{ mutableStateOf(false) }
+fun AddIngredientScreen(viewModel: AddIngredientViewModel, modifier: Modifier = Modifier) {
 
+    //consider to move this up to AddIngredientRoute(viewModel) and in only passed uiState to AddIngredientScreen with func
+    val uiState by viewModel.addIngredientUiState.collectAsState()
 
-    Column (modifier = modifier.fillMaxSize().clickable(indication = null, interactionSource = remember { MutableInteractionSource() }) { hideKeyboard = true }) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = viewModel::hideKeyboard
+            )
+    ) {
         SearchTextField(
-            onStartValue = input,
-            onValueChange = {
-                input = it
-                            },
+            onStartValue = uiState.input,
+            onValueChange = viewModel::onSearchTextFieldValueChange,
             modifier = Modifier.fillMaxWidth(),
-            label = {Text(text = "Add ingredient")},
-            hideKeyboard = hideKeyboard,
-            onFocusClear = { hideKeyboard = false },
-            onCancelClicked = {
-                input = input.drop(input.length)
-            }
+            label = { Text(text = "Add ingredient") },
+            hideKeyboard = uiState.hideKeyboard,
+            onFocusClear = viewModel::onFocusClear,
+            onCancelClicked = viewModel::onCancelClicked
         )
-        var selectedItem by remember { mutableStateOf(0)}
-        ScrollableTabRow(selectedTabIndex = selectedItem) {
+        ScrollableTabRow(
+            selectedTabIndex = uiState.selectedType.ordinal
+        ) {
             IngredientTypes.values().forEachIndexed { index, ingredientTypesItem ->
-                Tab(selected = selectedItem == index,
-                    onClick = { selectedItem = index
-                                selectedTab = ingredientTypesItem
-                              },
-                    icon = { Icon(painter = painterResource(id = ingredientTypesItem.iconId), contentDescription = "", tint = Color.Unspecified)},
+                Tab(
+                    selected = uiState.selectedType.ordinal == index,
+                    onClick = { viewModel.changeSelectedTab(ingredientTypesItem) },
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = ingredientTypesItem.iconId),
+                            contentDescription = "",
+                            tint = Color.Unspecified
+                        )
+                    },
                     text = { Text(text = ingredientTypesItem.name) })
             }
         }
-        LazyColumn (modifier = Modifier.fillMaxWidth()){
-            items(selectedTab.names.getValues()) {
-                item -> IngredientItem(item, modifier = Modifier.fillMaxWidth())
+        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+            items(uiState.selectedType.names.getValues()) { item ->
+                IngredientItem(item, modifier = Modifier.fillMaxWidth())
             }
         }
     }
@@ -118,5 +135,5 @@ fun TestPrev() {
 @Preview(showBackground = true)
 @Composable
 fun TestPrev2() {
-    AddIngredientScreen()
+    AddIngredientScreen(viewModel())
 }
