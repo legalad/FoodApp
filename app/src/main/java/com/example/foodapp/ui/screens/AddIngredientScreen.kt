@@ -16,6 +16,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.foodapp.R
+import com.example.foodapp.data.Datasource
+import com.example.foodapp.model.Ingredient
 import com.example.foodapp.model.emuns.*
 import com.example.foodapp.ui.components.SearchTextField
 import com.example.foodapp.ui.viewModel.AddIngredientViewModel
@@ -23,21 +25,23 @@ import com.example.foodapp.ui.viewModel.AddIngredientViewModel
 
 enum class IngredientTypes(
     @DrawableRes val iconId: Int,
-    val names: IngredientSpecificType
+    val names: IngredientSpecificType,
+    val ingredients: List<Ingredient>
 ) {
     VEGETABLES(
         R.drawable.icons8_group_of_vegetables_50,
-        Vegetables.POTATO
+        Vegetables.POTATO,
+        Datasource.ingredientList.filter { it.group == "Vegetables"}
     ),
-    FRUITS(R.drawable.icons8_group_of_fruits_50, Fruits.APPLE),
-    MEATS(R.drawable.icons8_steak_50, Meats.PORK),
-    DAIRY(R.drawable.icons8_milk_bottle_50, Dairy.YOGHURT),
-    GRAIN(R.drawable.icons8_soy_50, Grain.BARLEY),
-    FISHES(R.drawable.icons8_fish_food_50, Fishes.SALMON),
-    SEAFOOD(R.drawable.icons8_prawn_50, Seafood.SHRIMP),
-    SPICES(R.drawable.icons8_black_pepper_50, Spices.PEPPER),
-    DRINKS(R.drawable.icons8_cola_50, Drinks.WATER),
-    CANDIES(R.drawable.icons8_dessert_50, Candies.DONUT)
+    FRUITS(R.drawable.icons8_group_of_fruits_50, Fruits.APPLE, Datasource.ingredientList.filter { it.group == "Fruits "}),
+    MEATS(R.drawable.icons8_steak_50, Meats.PORK, Datasource.ingredientList.filter { it.group == "Animal foods"}),
+    DAIRY(R.drawable.icons8_milk_bottle_50, Dairy.YOGHURT, Datasource.ingredientList.filter { it.group == "Milk and milk products"}),
+    GRAIN(R.drawable.icons8_soy_50, Grain.BARLEY, Datasource.ingredientList.filter { it.group == "Cereals and cereal products"}),
+    FISHES(R.drawable.icons8_fish_food_50, Fishes.SALMON, Datasource.ingredientList.filter { it.subGroup == "Fishes"}),
+    SEAFOOD(R.drawable.icons8_prawn_50, Seafood.SHRIMP, Datasource.ingredientList.filter { it.group == "Aquatic foods" && it.subGroup != "Fishes"}),
+    SPICES(R.drawable.icons8_black_pepper_50, Spices.PEPPER, Datasource.ingredientList.filter { it.group == "Herbs and Spices"}),
+    DRINKS(R.drawable.icons8_cola_50, Drinks.WATER, Datasource.ingredientList.filter { it.group == "Beverages"}),
+    CANDIES(R.drawable.icons8_dessert_50, Candies.DONUT, Datasource.ingredientList.filter { it.group == "Confectioneries"})
 
 }
 
@@ -118,8 +122,8 @@ fun AddIngredientScreen(viewModel: AddIngredientViewModel, modifier: Modifier = 
             }
         }
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
-            items(uiState.selectedType.names.getValues()) { item ->
-                IngredientItem(item, modifier = Modifier.fillMaxWidth())
+            items(uiState.selectedType.ingredients) { item ->
+                IngredientItem(item.name, modifier = Modifier.fillMaxWidth())
             }
         }
     }

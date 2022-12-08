@@ -33,6 +33,7 @@ class AddIngredientViewModel : FoodAppViewModel() {
                 input = it.input.drop(it.input.length)
             )
         }
+        //Log.d("TEST", foodAppUiState.value.ingredientList.toString())
     }
 
     fun hideKeyboard() {
@@ -50,5 +51,6 @@ class AddIngredientViewModel : FoodAppViewModel() {
             )
         }
     }
+
 
 }

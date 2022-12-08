@@ -7,7 +7,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -15,7 +14,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.foodapp.ui.components.FoodAppNavigationBar
 import com.example.foodapp.ui.components.FoodAppTopAppBar
 import com.example.foodapp.ui.navigation.FoodAppNavGraph
-import com.example.foodapp.ui.navigation.FoodAppNavigation
 import com.example.foodapp.ui.viewModel.FoodAppViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -30,6 +28,7 @@ fun FoodAppScreen() {
     // Create ui state --> consider to move deeper
     val uiState by viewModel.foodAppUiState.collectAsState()
 
+
     Scaffold (
         topBar = {FoodAppTopAppBar()},
         bottomBar = { FoodAppNavigationBar(navController)},
@@ -42,4 +41,5 @@ fun FoodAppScreen() {
 @Composable
 fun FoodAppScreenPrev() {
     FoodAppScreen()
+
 }
