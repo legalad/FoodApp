@@ -33,7 +33,7 @@ enum class IngredientTypes(
         Vegetables.POTATO,
         Datasource.ingredientList.filter { it.group == "Vegetables"}
     ),
-    FRUITS(R.drawable.icons8_group_of_fruits_50, Fruits.APPLE, Datasource.ingredientList.filter { it.group == "Fruits "}),
+    FRUITS(R.drawable.icons8_group_of_fruits_50, Fruits.APPLE, Datasource.ingredientList.filter { it.group == "Fruits"}),
     MEATS(R.drawable.icons8_steak_50, Meats.PORK, Datasource.ingredientList.filter { it.group == "Animal foods"}),
     DAIRY(R.drawable.icons8_milk_bottle_50, Dairy.YOGHURT, Datasource.ingredientList.filter { it.group == "Milk and milk products"}),
     GRAIN(R.drawable.icons8_soy_50, Grain.BARLEY, Datasource.ingredientList.filter { it.group == "Cereals and cereal products"}),
