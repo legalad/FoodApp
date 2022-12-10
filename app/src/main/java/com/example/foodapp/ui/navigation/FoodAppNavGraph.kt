@@ -2,7 +2,7 @@ package com.example.foodapp.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -27,7 +27,7 @@ fun FoodAppNavGraph(
             BrowseRecipesScreen()
         }
         composable(FoodAppDestinations.ADD_INGREDIENT_ROUTE.name) {
-            val addIngredientViewModel: AddIngredientViewModel = viewModel()
+            val addIngredientViewModel = hiltViewModel<AddIngredientViewModel>()
             AddIngredientScreen(addIngredientViewModel)
         }
         composable(FoodAppDestinations.PANTRY_ROUTE.name) {

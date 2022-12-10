@@ -122,7 +122,9 @@ fun AddIngredientScreen(viewModel: AddIngredientViewModel, modifier: Modifier = 
             }
         }
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
-            items(uiState.selectedType.ingredients) { item ->
+            //model that logic to viewModel later
+            val ingredients = if (uiState.input.length >= 3) Datasource.ingredientList.filter { it.name.uppercase().contains(uiState.input.uppercase()) } else uiState.selectedType.ingredients
+            items(ingredients) { item ->
                 IngredientItem(item.name, modifier = Modifier.fillMaxWidth())
             }
         }

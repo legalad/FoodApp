@@ -3,11 +3,14 @@ package com.example.foodapp.ui.viewModel
 import android.util.Log
 import com.example.foodapp.ui.screens.IngredientTypes
 import com.example.foodapp.ui.state.AddIngredientUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
-class AddIngredientViewModel : FoodAppViewModel() {
+@HiltViewModel
+class AddIngredientViewModel @Inject constructor() : FoodAppViewModel() {
     private val _addIngredientUiState = MutableStateFlow(AddIngredientUiState())
     val addIngredientUiState: StateFlow<AddIngredientUiState> = _addIngredientUiState
 
@@ -33,7 +36,6 @@ class AddIngredientViewModel : FoodAppViewModel() {
                 input = it.input.drop(it.input.length)
             )
         }
-        //Log.d("TEST", foodAppUiState.value.ingredientList.toString())
     }
 
     fun hideKeyboard() {

@@ -14,11 +14,13 @@ import com.example.foodapp.data.Datasource
 import com.example.foodapp.model.Ingredient
 import com.example.foodapp.ui.FoodAppScreen
 import com.example.foodapp.ui.theme.FoodAppTheme
+import dagger.hilt.android.AndroidEntryPoint
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import java.io.BufferedReader
 import java.io.IOException
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
