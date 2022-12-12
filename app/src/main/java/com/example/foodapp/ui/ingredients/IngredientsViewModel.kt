@@ -1,9 +1,8 @@
-package com.example.foodapp.ui.viewModel
+package com.example.foodapp.ui.ingredients
 
 import android.util.Log
 import com.example.foodapp.data.source.IngredientRepository
-import com.example.foodapp.ui.screens.IngredientTypes
-import com.example.foodapp.ui.state.AddIngredientUiState
+import com.example.foodapp.ui.FoodAppViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,29 +10,29 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
-class AddIngredientViewModel @Inject constructor(
+class IngredientsViewModel @Inject constructor(
     private val ingredientRepository: IngredientRepository
 ) : FoodAppViewModel() {
-    private val _addIngredientUiState = MutableStateFlow(AddIngredientUiState())
-    val addIngredientUiState: StateFlow<AddIngredientUiState> = _addIngredientUiState
+    private val _ingredientsUiState = MutableStateFlow(IngredientsUiState())
+    val ingredientsUiState: StateFlow<IngredientsUiState> = _ingredientsUiState
 
     fun changeSelectedTab(selectedTab: IngredientTypes) {
-        _addIngredientUiState.update {
+        _ingredientsUiState.update {
             it.copy(selectedType = selectedTab)
         }
     }
 
     fun onSearchTextFieldValueChange (input: String) {
-        _addIngredientUiState.update {
+        _ingredientsUiState.update {
             it.copy(
                 input = input
             )
         }
-        Log.d("DANE", _addIngredientUiState.value.selectedType.name)
+        Log.d("DANE", _ingredientsUiState.value.selectedType.name)
     }
 
     fun onCancelClicked() {
-        _addIngredientUiState.update {
+        _ingredientsUiState.update {
 
             it.copy(
                 input = it.input.drop(it.input.length)
@@ -42,7 +41,7 @@ class AddIngredientViewModel @Inject constructor(
     }
 
     fun hideKeyboard() {
-        _addIngredientUiState.update {
+        _ingredientsUiState.update {
             it.copy(
                 hideKeyboard = true
             )
@@ -50,7 +49,7 @@ class AddIngredientViewModel @Inject constructor(
     }
 
     fun onFocusClear() {
-        _addIngredientUiState.update {
+        _ingredientsUiState.update {
             it.copy(
                 hideKeyboard = false
             )

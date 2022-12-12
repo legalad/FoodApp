@@ -1,4 +1,4 @@
-package com.example.foodapp.ui.state
+package com.example.foodapp.ui
 
 import com.example.foodapp.data.Datasource
 import com.example.foodapp.model.Ingredient

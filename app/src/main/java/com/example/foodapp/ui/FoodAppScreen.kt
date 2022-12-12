@@ -14,7 +14,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.foodapp.ui.components.FoodAppNavigationBar
 import com.example.foodapp.ui.components.FoodAppTopAppBar
 import com.example.foodapp.ui.navigation.FoodAppNavGraph
-import com.example.foodapp.ui.viewModel.FoodAppViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable

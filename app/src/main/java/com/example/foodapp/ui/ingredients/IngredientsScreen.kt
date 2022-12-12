@@ -1,4 +1,4 @@
-package com.example.foodapp.ui.screens
+package com.example.foodapp.ui.ingredients
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
@@ -20,7 +20,6 @@ import com.example.foodapp.data.Datasource
 import com.example.foodapp.model.Ingredient
 import com.example.foodapp.model.emuns.*
 import com.example.foodapp.ui.components.SearchTextField
-import com.example.foodapp.ui.viewModel.AddIngredientViewModel
 
 
 enum class IngredientTypes(
@@ -81,10 +80,10 @@ fun IngredientItem(name: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun AddIngredientScreen(viewModel: AddIngredientViewModel, modifier: Modifier = Modifier) {
+fun IngredientsScreen(viewModel: IngredientsViewModel, modifier: Modifier = Modifier) {
 
     //consider to move this up to AddIngredientRoute(viewModel) and in only passed uiState to AddIngredientScreen with func
-    val uiState by viewModel.addIngredientUiState.collectAsState()
+    val uiState by viewModel.ingredientsUiState.collectAsState()
 
     Column(
         modifier = modifier
@@ -141,5 +140,5 @@ fun TestPrev() {
 @Preview(showBackground = true)
 @Composable
 fun TestPrev2() {
-    AddIngredientScreen(viewModel())
+    IngredientsScreen(viewModel())
 }

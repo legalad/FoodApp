@@ -1,8 +1,6 @@
-package com.example.foodapp.ui.state
+package com.example.foodapp.ui.ingredients
 
-import com.example.foodapp.ui.screens.IngredientTypes
-
-data class AddIngredientUiState (
+data class IngredientsUiState (
     val selectedType: IngredientTypes = IngredientTypes.VEGETABLES,
     val selectedTypeItem: Int = 0,
     val input: String = "",

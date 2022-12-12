@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.foodapp.R
 import com.example.foodapp.ui.components.SearchTextField
+import com.example.foodapp.ui.ingredients.IngredientTypes
 
 @Composable
 fun PantryScreen() {

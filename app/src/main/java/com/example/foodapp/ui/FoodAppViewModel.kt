@@ -1,7 +1,6 @@
-package com.example.foodapp.ui.viewModel
+package com.example.foodapp.ui
 
 import androidx.lifecycle.ViewModel
-import com.example.foodapp.ui.state.FoodAppUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
