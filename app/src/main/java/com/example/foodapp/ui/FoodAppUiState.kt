@@ -1,8 +1,7 @@
 package com.example.foodapp.ui
 
-import com.example.foodapp.data.Datasource
-import com.example.foodapp.model.Ingredient
+import com.example.foodapp.data.Ingredient
 
 data class FoodAppUiState (
-    val ingredientList: List<Ingredient> = Datasource.ingredientList
+    val ingredientList: List<Ingredient> = emptyList()
 )

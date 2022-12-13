@@ -18,12 +18,25 @@ class IngredientsViewModel @Inject constructor(
 ) : FoodAppViewModel() {
     private val _ingredientsUiState = MutableStateFlow(IngredientsUiState())
     val ingredientsUiState: StateFlow<IngredientsUiState> = _ingredientsUiState
-    private lateinit var ingredient: List<Ingredient>
 
     init {
         viewModelScope.launch {
-            ingredient = ingredientRepository.getIngredients()
+            _ingredientsUiState.update {
+                it.copy(ingredientList = ingredientRepository.getIngredients())
+            }
         }
+    }
+
+    fun getFilteredIngredientsList(): List<Ingredient> {
+        return if (_ingredientsUiState.value.input.length >=3)
+            _ingredientsUiState.value.ingredientList.filter {
+                it.name.uppercase().contains(_ingredientsUiState.value.input.uppercase())
+            }
+        else filterIngredientList (_ingredientsUiState.value.selectedType.filter) //ingredientsUiState.value.ingredientList.filter { it.group == "Fruits" }
+    }
+
+    private fun filterIngredientList(f: (List<Ingredient>) -> List<Ingredient>): List<Ingredient>{
+        return f(_ingredientsUiState.value.ingredientList)
     }
 
 

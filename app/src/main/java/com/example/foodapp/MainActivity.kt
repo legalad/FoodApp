@@ -10,21 +10,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.foodapp.data.Datasource
-import com.example.foodapp.model.Ingredient
 import com.example.foodapp.ui.FoodAppScreen
 import com.example.foodapp.ui.theme.FoodAppTheme
 import dagger.hilt.android.AndroidEntryPoint
-import org.apache.commons.csv.CSVFormat
-import org.apache.commons.csv.CSVParser
-import java.io.BufferedReader
-import java.io.IOException
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val ingredientList = mutableListOf<Ingredient>()
+        /*val ingredientList = mutableListOf<Ingredient>()
         try {
             val inputStream = resources.openRawResource(R.raw.generic_food)
             val bufferedReader = BufferedReader(inputStream.bufferedReader())
@@ -38,7 +32,7 @@ class MainActivity : ComponentActivity() {
         catch (e: IOException) {
             e.printStackTrace()
         }
-        Datasource.ingredientList.addAll(ingredientList)
+        Datasource.it.addAll(ingredientList)*/
         setContent {
             FoodAppTheme {
                 // A surface container using the 'background' color from the theme

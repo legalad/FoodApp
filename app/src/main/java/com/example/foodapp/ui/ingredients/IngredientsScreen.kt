@@ -16,31 +16,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.foodapp.R
-import com.example.foodapp.data.Datasource
-import com.example.foodapp.model.Ingredient
-import com.example.foodapp.model.emuns.*
+import com.example.foodapp.data.Ingredient
 import com.example.foodapp.ui.components.SearchTextField
 
 
 enum class IngredientTypes(
     @DrawableRes val iconId: Int,
-    val names: IngredientSpecificType,
-    val ingredients: List<Ingredient>
+    val filter: (List<Ingredient>) -> List<Ingredient>
 ) {
-    VEGETABLES(
-        R.drawable.icons8_group_of_vegetables_50,
-        Vegetables.POTATO,
-        Datasource.ingredientList.filter { it.group == "Vegetables"}
-    ),
-    FRUITS(R.drawable.icons8_group_of_fruits_50, Fruits.APPLE, Datasource.ingredientList.filter { it.group == "Fruits"}),
-    MEATS(R.drawable.icons8_steak_50, Meats.PORK, Datasource.ingredientList.filter { it.group == "Animal foods"}),
-    DAIRY(R.drawable.icons8_milk_bottle_50, Dairy.YOGHURT, Datasource.ingredientList.filter { it.group == "Milk and milk products"}),
-    GRAIN(R.drawable.icons8_soy_50, Grain.BARLEY, Datasource.ingredientList.filter { it.group == "Cereals and cereal products"}),
-    FISHES(R.drawable.icons8_fish_food_50, Fishes.SALMON, Datasource.ingredientList.filter { it.subGroup == "Fishes"}),
-    SEAFOOD(R.drawable.icons8_prawn_50, Seafood.SHRIMP, Datasource.ingredientList.filter { it.group == "Aquatic foods" && it.subGroup != "Fishes"}),
-    SPICES(R.drawable.icons8_black_pepper_50, Spices.PEPPER, Datasource.ingredientList.filter { it.group == "Herbs and Spices"}),
-    DRINKS(R.drawable.icons8_cola_50, Drinks.WATER, Datasource.ingredientList.filter { it.group == "Beverages"}),
-    CANDIES(R.drawable.icons8_dessert_50, Candies.DONUT, Datasource.ingredientList.filter { it.group == "Confectioneries"})
+    VEGETABLES(R.drawable.icons8_group_of_vegetables_50, { it -> it.filter { it.group == "Vegetables" }}),
+    FRUITS(R.drawable.icons8_group_of_fruits_50, { it -> it.filter { it.group == "Fruits" }}),
+    MEATS(R.drawable.icons8_steak_50, { it -> it.filter { it.group == "Animal foods"}}),
+    DAIRY(R.drawable.icons8_milk_bottle_50, { it -> it.filter { it.group == "Milk and milk products"}}),
+    GRAIN(R.drawable.icons8_soy_50, { it -> it.filter { it.group == "Cereals and cereal products"}}),
+    FISHES(R.drawable.icons8_fish_food_50, { it -> it.filter { it.subGroup == "Fishes"}}),
+    SEAFOOD(R.drawable.icons8_prawn_50, { it -> it.filter { it.group == "Aquatic foods" && it.subGroup != "Fishes"}}),
+    SPICES(R.drawable.icons8_black_pepper_50, { it -> it.filter { it.group == "Herbs and Spices"}}),
+    DRINKS(R.drawable.icons8_cola_50, { it -> it.filter { it.group == "Beverages"}}),
+    CANDIES(R.drawable.icons8_dessert_50, { it -> it.filter { it.group == "Confectioneries"}})
 
 }
 
@@ -122,7 +115,8 @@ fun IngredientsScreen(viewModel: IngredientsViewModel, modifier: Modifier = Modi
         }
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
             //model that logic to viewModel later
-            val ingredients = if (uiState.input.length >= 3) Datasource.ingredientList.filter { it.name.uppercase().contains(uiState.input.uppercase()) } else uiState.selectedType.ingredients
+            val ingredients = viewModel.getFilteredIngredientsList()
+                //if (uiState.input.length >= 3) Datasource.ingredientList.filter { it.name.uppercase().contains(uiState.input.uppercase()) } else uiState.selectedType.ingredients
             items(ingredients) { item ->
                 IngredientItem(item.name, modifier = Modifier.fillMaxWidth())
             }
