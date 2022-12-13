@@ -1,6 +1,5 @@
 package com.example.foodapp.ui.ingredients
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.foodapp.data.Ingredient
 import com.example.foodapp.data.source.IngredientRepository
@@ -30,7 +29,7 @@ class IngredientsViewModel @Inject constructor(
     fun getFilteredIngredientsList(): List<Ingredient> {
         return if (_ingredientsUiState.value.input.length >=3)
             _ingredientsUiState.value.ingredientList.filter {
-                it.name.uppercase().contains(_ingredientsUiState.value.input.uppercase())
+                it.name.uppercase().contains(_ingredientsUiState.value.input.uppercase().trim())
             }
         else filterIngredientList (_ingredientsUiState.value.selectedType.filter) //ingredientsUiState.value.ingredientList.filter { it.group == "Fruits" }
     }
@@ -52,7 +51,6 @@ class IngredientsViewModel @Inject constructor(
                 input = input
             )
         }
-        Log.d("DANE", _ingredientsUiState.value.selectedType.name)
     }
 
     fun onCancelClicked() {

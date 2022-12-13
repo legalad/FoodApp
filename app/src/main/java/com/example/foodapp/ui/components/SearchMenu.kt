@@ -78,7 +78,7 @@ fun SearchTextField(
                         onCancelClicked()
                         if (visibility.value) visibility.value = !visibility.value
                     },
-                    tint = if (visibility.value) Color.Black else Color.Transparent) },
+                    tint = if (visibility.value) MaterialTheme.colorScheme.onSurfaceVariant else Color.Transparent)},
             singleLine = true,
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
