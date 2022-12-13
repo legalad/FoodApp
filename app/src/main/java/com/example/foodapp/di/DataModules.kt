@@ -2,11 +2,10 @@ package com.example.foodapp.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.foodapp.data.source.DefaultIngredientRepository
-import com.example.foodapp.data.source.IngredientDataSource
-import com.example.foodapp.data.source.IngredientRepository
+import com.example.foodapp.data.source.*
 import com.example.foodapp.data.source.local.FoodAppDatabase
 import com.example.foodapp.data.source.local.IngredientLocalDataSource
+import com.example.foodapp.data.source.local.PantryLocalDataSource
 import com.example.foodapp.data.source.remote.IngredientRemoteDataSource
 import dagger.Module
 import dagger.Provides
@@ -25,6 +24,10 @@ annotation class RemoteIngredientDataSource
 @Retention(AnnotationRetention.RUNTIME)
 annotation class LocalIngredientDataSource
 
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class LocalPantryDataSource
+
 @Module
 @InstallIn(SingletonComponent::class)
 object RepositoryModule {
@@ -37,6 +40,15 @@ object RepositoryModule {
         @IODispatcher ioDispatcher: CoroutineDispatcher
     ): IngredientRepository {
         return DefaultIngredientRepository(remoteDataSource, localDataSource, ioDispatcher)
+    }
+
+    @Singleton
+    @Provides
+    fun providePantryRepository(
+        @LocalPantryDataSource localDataSource: PantryDataSource,
+        @IODispatcher ioDispatcher: CoroutineDispatcher
+    ): PantryRepository {
+        return DefaultPantryRepository(localDataSource, ioDispatcher)
     }
 
 }
@@ -60,6 +72,18 @@ object DataSourceModule {
         return IngredientLocalDataSource(database.ingredientDao(), ioDispatcher)
     }
 
+    @Singleton
+    @LocalPantryDataSource
+    @Provides
+    fun providePantryLocalDataSource(
+        database: FoodAppDatabase,
+        @IODispatcher ioDispatcher: CoroutineDispatcher
+    ): PantryDataSource {
+        return PantryLocalDataSource(database.pantryDao(), ioDispatcher)
+    }
+
+
+
 }
 
 @Module
@@ -73,7 +97,7 @@ object DatabaseModule {
             context.applicationContext,
             FoodAppDatabase::class.java,
             "food_app.db"
-        ).build()
+        ).createFromAsset("database/food_app.db").build()
     }
 
 }

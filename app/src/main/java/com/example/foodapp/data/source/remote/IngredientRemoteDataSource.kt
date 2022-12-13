@@ -5,7 +5,11 @@ import com.example.foodapp.data.source.IngredientDataSource
 
 object IngredientRemoteDataSource : IngredientDataSource {
 
-    override suspend fun getIngredients(): Result<List<Ingredient>> {
+    override suspend fun getIngredients(): List<Ingredient> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun addIngredient(ingredient: Ingredient) {
         TODO("Not yet implemented")
     }
 

@@ -10,8 +10,12 @@ class DefaultIngredientRepository (
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
         ) : IngredientRepository {
 
-    override suspend fun getIngredients(): Result<List<Ingredient>> {
-        TODO("Not yet implemented")
+    override suspend fun getIngredients(): List<Ingredient> {
+        return ingredientLocalDataSource.getIngredients()
+    }
+
+    override suspend fun addIngredient(ingredient: Ingredient) {
+        ingredientLocalDataSource.addIngredient(ingredient)
     }
 
 }

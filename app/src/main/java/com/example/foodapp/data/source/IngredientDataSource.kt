@@ -4,6 +4,8 @@ import com.example.foodapp.data.Ingredient
 
 interface IngredientDataSource {
 
-    suspend fun getIngredients(): Result<List<Ingredient>>
+    suspend fun getIngredients(): List<Ingredient>
+
+    suspend fun addIngredient(ingredient: Ingredient)
 
 }
