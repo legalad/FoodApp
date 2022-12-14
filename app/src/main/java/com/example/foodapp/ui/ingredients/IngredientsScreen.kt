@@ -16,24 +16,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.foodapp.R
-import com.example.foodapp.data.Ingredient
+import com.example.foodapp.model.IngredientUiState
 import com.example.foodapp.ui.components.SearchTextField
 
 
 enum class IngredientTypes(
     @DrawableRes val iconId: Int,
-    val filter: (List<Ingredient>) -> List<Ingredient>
+    val filter: (List<IngredientUiState>) -> List<IngredientUiState>
 ) {
-    VEGETABLES(R.drawable.icons8_group_of_vegetables_50, { it -> it.filter { it.group == "Vegetables" }}),
-    FRUITS(R.drawable.icons8_group_of_fruits_50, { it -> it.filter { it.group == "Fruits" }}),
-    MEATS(R.drawable.icons8_steak_50, { it -> it.filter { it.group == "Animal foods"}}),
-    DAIRY(R.drawable.icons8_milk_bottle_50, { it -> it.filter { it.group == "Milk and milk products"}}),
-    GRAIN(R.drawable.icons8_soy_50, { it -> it.filter { it.group == "Cereals and cereal products"}}),
-    FISHES(R.drawable.icons8_fish_food_50, { it -> it.filter { it.subGroup == "Fishes"}}),
-    SEAFOOD(R.drawable.icons8_prawn_50, { it -> it.filter { it.group == "Aquatic foods" && it.subGroup != "Fishes"}}),
-    SPICES(R.drawable.icons8_black_pepper_50, { it -> it.filter { it.group == "Herbs and Spices"}}),
-    DRINKS(R.drawable.icons8_cola_50, { it -> it.filter { it.group == "Beverages"}}),
-    CANDIES(R.drawable.icons8_dessert_50, { it -> it.filter { it.group == "Confectioneries"}})
+    VEGETABLES(R.drawable.icons8_group_of_vegetables_50, { it -> it.filter { it.ingredient.group == "Vegetables" }}),
+    FRUITS(R.drawable.icons8_group_of_fruits_50, { it -> it.filter { it.ingredient.group == "Fruits" }}),
+    MEATS(R.drawable.icons8_steak_50, { it -> it.filter { it.ingredient.group == "Animal foods"}}),
+    DAIRY(R.drawable.icons8_milk_bottle_50, { it -> it.filter { it.ingredient.group == "Milk and milk products"}}),
+    GRAIN(R.drawable.icons8_soy_50, { it -> it.filter { it.ingredient.group == "Cereals and cereal products"}}),
+    FISHES(R.drawable.icons8_fish_food_50, { it -> it.filter { it.ingredient.subGroup == "Fishes"}}),
+    SEAFOOD(R.drawable.icons8_prawn_50, { it -> it.filter { it.ingredient.group == "Aquatic foods" && it.ingredient.subGroup != "Fishes"}}),
+    SPICES(R.drawable.icons8_black_pepper_50, { it -> it.filter { it.ingredient.group == "Herbs and Spices"}}),
+    DRINKS(R.drawable.icons8_cola_50, { it -> it.filter { it.ingredient.group == "Beverages"}}),
+    CANDIES(R.drawable.icons8_dessert_50, { it -> it.filter { it.ingredient.group == "Confectioneries"}})
 
 }
 
@@ -57,7 +57,7 @@ fun IngredientTypeTabRow() {
 }
 
 @Composable
-fun IngredientItem(name: String, modifier: Modifier = Modifier) {
+fun IngredientItem(ingredientUiState: IngredientUiState, onCheckedChange: (IngredientUiState) -> Unit, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .padding(start = 40.dp, end = 40.dp),
@@ -66,9 +66,11 @@ fun IngredientItem(name: String, modifier: Modifier = Modifier) {
     ) {
         Row {
             //Icon(painter = painterResource(id = R.drawable.icons8_soy_50), contentDescription = "")
-            Text(text = name)
+            Text(text = ingredientUiState.ingredient.name)
         }
-        Checkbox(checked = true, onCheckedChange = {})
+        Checkbox(checked = ingredientUiState.selected, onCheckedChange = {
+            onCheckedChange(ingredientUiState)
+        })
     }
 }
 
@@ -118,7 +120,7 @@ fun IngredientsScreen(viewModel: IngredientsViewModel, modifier: Modifier = Modi
             val ingredients = viewModel.getFilteredIngredientsList()
                 //if (uiState.input.length >= 3) Datasource.ingredientList.filter { it.name.uppercase().contains(uiState.input.uppercase()) } else uiState.selectedType.ingredients
             items(ingredients) { item ->
-                IngredientItem(item.name, modifier = Modifier.fillMaxWidth())
+                IngredientItem(item, onCheckedChange = viewModel::onCheckedChange, modifier = Modifier.fillMaxWidth())
             }
         }
     }

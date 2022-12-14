@@ -1,8 +1,9 @@
 package com.example.foodapp.ui.ingredients
 
 import androidx.lifecycle.viewModelScope
-import com.example.foodapp.data.Ingredient
 import com.example.foodapp.data.source.IngredientRepository
+import com.example.foodapp.data.utils.Mappers
+import com.example.foodapp.model.IngredientUiState
 import com.example.foodapp.ui.FoodAppViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,21 +21,21 @@ class IngredientsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _ingredientsUiState.update {
-                it.copy(ingredientList = ingredientRepository.getIngredients())
+            _ingredientsUiState.update { it ->
+                it.copy(ingredientList = ingredientRepository.getIngredients().map { Mappers.fromIngredientToIngredientUiState(it) })
             }
         }
     }
 
-    fun getFilteredIngredientsList(): List<Ingredient> {
+    fun getFilteredIngredientsList(): List<IngredientUiState> {
         return if (_ingredientsUiState.value.input.length >=3)
             _ingredientsUiState.value.ingredientList.filter {
-                it.name.uppercase().contains(_ingredientsUiState.value.input.uppercase().trim())
+                it.ingredient.name.uppercase().contains(_ingredientsUiState.value.input.uppercase().trim())
             }
         else filterIngredientList (_ingredientsUiState.value.selectedType.filter) //ingredientsUiState.value.ingredientList.filter { it.group == "Fruits" }
     }
 
-    private fun filterIngredientList(f: (List<Ingredient>) -> List<Ingredient>): List<Ingredient>{
+    private fun filterIngredientList(f: (List<IngredientUiState>) -> List<IngredientUiState>): List<IngredientUiState>{
         return f(_ingredientsUiState.value.ingredientList)
     }
 
@@ -59,6 +60,22 @@ class IngredientsViewModel @Inject constructor(
             it.copy(
                 input = it.input.drop(it.input.length)
             )
+        }
+    }
+
+    fun onCheckedChange(ingredientUiState: IngredientUiState){
+        val temp = _ingredientsUiState.value.ingredientList
+        val index = temp.indexOf(ingredientUiState)
+        val force = _ingredientsUiState.value.forceRecomposition
+
+        if (index != -1){
+            temp[index].selected = !temp[index].selected
+            _ingredientsUiState.update {
+                it.copy(
+                    ingredientList = temp,
+                    forceRecomposition = !force
+                )
+            }
         }
     }
 
