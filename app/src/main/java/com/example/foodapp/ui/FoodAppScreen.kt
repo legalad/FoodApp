@@ -31,6 +31,7 @@ fun FoodAppScreen() {
     Scaffold (
         topBar = {FoodAppTopAppBar()},
         bottomBar = { FoodAppNavigationBar(navController)},
+        floatingActionButton = {},
         content = { innerPadding ->
             FoodAppNavGraph(modifier = Modifier.padding(innerPadding), navController = navController)
         })

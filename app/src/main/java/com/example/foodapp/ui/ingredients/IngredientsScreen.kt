@@ -6,12 +6,15 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -64,66 +67,78 @@ fun IngredientItem(ingredientUiState: IngredientUiState, onCheckedChange: (Ingre
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row {
-            //Icon(painter = painterResource(id = R.drawable.icons8_soy_50), contentDescription = "")
-            Text(text = ingredientUiState.ingredient.name)
-        }
+        Text(text = ingredientUiState.ingredient.name, maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(8f))
         Checkbox(checked = ingredientUiState.selected, onCheckedChange = {
             onCheckedChange(ingredientUiState)
-        })
+        }, modifier = Modifier.weight(1f))
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IngredientsScreen(viewModel: IngredientsViewModel, modifier: Modifier = Modifier) {
 
     //consider to move this up to AddIngredientRoute(viewModel) and in only passed uiState to AddIngredientScreen with func
     val uiState by viewModel.ingredientsUiState.collectAsState()
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() },
-                onClick = viewModel::hideKeyboard
-            )
-    ) {
-        SearchTextField(
-            onStartValue = uiState.input,
-            onValueChange = viewModel::onSearchTextFieldValueChange,
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text(text = "Add ingredient") },
-            hideKeyboard = uiState.hideKeyboard,
-            onFocusClear = viewModel::onFocusClear,
-            onCancelClicked = viewModel::onCancelClicked
-        )
-        ScrollableTabRow(
-            selectedTabIndex = uiState.selectedType.ordinal
+    Scaffold(
+        floatingActionButton = {
+            SmallFloatingActionButton(onClick = { /*TODO*/ }) {
+                Icon(imageVector = Icons.Filled.Add, contentDescription = "add")
+            }
+        },
+        floatingActionButtonPosition = FabPosition.Center,
+        content = { innerPadding ->
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() },
+                    onClick = viewModel::hideKeyboard
+                )
+                .padding(innerPadding)
         ) {
-            IngredientTypes.values().forEachIndexed { index, ingredientTypesItem ->
-                Tab(
-                    selected = uiState.selectedType.ordinal == index,
-                    onClick = { viewModel.changeSelectedTab(ingredientTypesItem) },
-                    icon = {
-                        Icon(
-                            painter = painterResource(id = ingredientTypesItem.iconId),
-                            contentDescription = "",
-                            tint = Color.Unspecified
-                        )
-                    },
-                    text = { Text(text = ingredientTypesItem.name) })
+            SearchTextField(
+                onStartValue = uiState.input,
+                onValueChange = viewModel::onSearchTextFieldValueChange,
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text(text = "Add ingredient") },
+                hideKeyboard = uiState.hideKeyboard,
+                onFocusClear = viewModel::onFocusClear,
+                onCancelClicked = viewModel::onCancelClicked
+            )
+            ScrollableTabRow(
+                selectedTabIndex = uiState.selectedType.ordinal
+            ) {
+                IngredientTypes.values().forEachIndexed { index, ingredientTypesItem ->
+                    Tab(
+                        selected = uiState.selectedType.ordinal == index,
+                        onClick = { viewModel.changeSelectedTab(ingredientTypesItem) },
+                        icon = {
+                            Icon(
+                                painter = painterResource(id = ingredientTypesItem.iconId),
+                                contentDescription = "",
+                                tint = Color.Unspecified
+                            )
+                        },
+                        text = { Text(text = ingredientTypesItem.name) })
+                }
             }
-        }
-        LazyColumn(modifier = Modifier.fillMaxWidth()) {
-            //model that logic to viewModel later
-            val ingredients = viewModel.getFilteredIngredientsList()
+            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                //model that logic to viewModel later
+                val ingredients = viewModel.getFilteredIngredientsList()
                 //if (uiState.input.length >= 3) Datasource.ingredientList.filter { it.name.uppercase().contains(uiState.input.uppercase()) } else uiState.selectedType.ingredients
-            items(ingredients) { item ->
-                IngredientItem(item, onCheckedChange = viewModel::onCheckedChange, modifier = Modifier.fillMaxWidth())
+                items(ingredients) { item ->
+                    IngredientItem(
+                        item,
+                        onCheckedChange = viewModel::onCheckedChange,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
         }
-    }
+    })
 }
 
 @Preview(showBackground = true)
