@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.foodapp.data.source.IngredientRepository
 import com.example.foodapp.data.utils.Mappers
 import com.example.foodapp.model.IngredientUiState
+import com.example.foodapp.model.PantryItemUiState
 import com.example.foodapp.ui.FoodAppViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -64,20 +65,63 @@ class IngredientsViewModel @Inject constructor(
     }
 
     fun onCheckedChange(ingredientUiState: IngredientUiState){
-        val temp = _ingredientsUiState.value.ingredientList
+        val temp = _ingredientsUiState.value.ingredientList.toMutableList()
         val index = temp.indexOf(ingredientUiState)
-        val force = _ingredientsUiState.value.forceRecomposition
-
+        temp[index] = temp[index].copy(selected = !temp[index].selected)
         if (index != -1){
-            temp[index].selected = !temp[index].selected
             _ingredientsUiState.update {
                 it.copy(
                     ingredientList = temp,
-                    forceRecomposition = !force
                 )
             }
         }
     }
+
+    fun onEditItemButtonClicked(item: PantryItemUiState){
+        val tmp = _ingredientsUiState.value.pantryItemList.toMutableList()
+        val index = tmp.indexOf(item)
+        tmp[index] = tmp[index].copy(isPantryEdited = !tmp[index].isPantryEdited)
+        _ingredientsUiState.update {
+            it.copy(
+                pantryItemList = tmp
+            )
+        }
+    }
+
+    fun onItemButtonClicked(item: PantryItemUiState){
+        val tmp = _ingredientsUiState.value.pantryItemList.toMutableList()
+        val index = tmp.indexOf(item)
+        tmp[index] = tmp[index].copy(isPantryCollapsed = !tmp[index].isPantryCollapsed)
+        _ingredientsUiState.update {
+            it.copy(
+                pantryItemList = tmp,
+            )
+        }
+    }
+
+    fun onInputProductNameValueChange(item: PantryItemUiState, value: String){
+        val tmp = _ingredientsUiState.value.pantryItemList.toMutableList()
+        val index = tmp.indexOf(item)
+        tmp[index] = tmp[index].copy(inputProductName = value)
+        _ingredientsUiState.update {
+            it.copy(
+                pantryItemList = tmp,
+            )
+        }
+    }
+
+    fun onSliderValueChange(item: PantryItemUiState, value: Float){
+        val tmp = _ingredientsUiState.value.pantryItemList.toMutableList()
+        val index = tmp.indexOf(item)
+        tmp[index] = tmp[index].copy(sliderPosition = value)
+        _ingredientsUiState.update {
+            it.copy(
+                pantryItemList = tmp,
+            )
+        }
+    }
+
+
 
     fun hideKeyboard() {
         _ingredientsUiState.update {
@@ -92,6 +136,13 @@ class IngredientsViewModel @Inject constructor(
             it.copy(
                 hideKeyboard = false
             )
+        }
+    }
+
+    fun onAddFabClicked(){
+        val tmp = _ingredientsUiState.value.ingredientList.filter { it.selected }.map { Mappers.fromPantryItemToPantryItemUiState(Mappers.fromIngredientToPantry(it.ingredient)) }
+        _ingredientsUiState.update {
+            it.copy(addingScreen = true, pantryItemList = tmp)
         }
     }
 

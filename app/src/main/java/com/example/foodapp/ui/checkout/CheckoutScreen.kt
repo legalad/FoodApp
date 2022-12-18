@@ -3,7 +3,6 @@ package com.example.foodapp.ui.checkout
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
@@ -16,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.foodapp.data.Ingredient
-import com.example.foodapp.data.Pantry
+import com.example.foodapp.model.PantryItemUiState
 import com.example.foodapp.model.Units
 import java.util.*
 
@@ -27,27 +26,39 @@ fun CheckoutScreen(){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditablePantryItem(item: Pantry, ingredient: Ingredient, onItemClicked: () -> Unit, onEditIconClicked: () -> Unit) {
+fun EditablePantryItem(
+    item: PantryItemUiState,
+    ingredient: Ingredient,
+    onItemClicked: (PantryItemUiState) -> Unit,
+    onEditIconClicked: (PantryItemUiState) -> Unit,
+    onInputProductNameValueChange: (PantryItemUiState, String) -> Unit,
+    onSliderValueChange: (PantryItemUiState, Float) -> Unit
+) {
     val options = Units.values()
     var expanded by remember { mutableStateOf(false) }
     var selectedOptionText by remember { mutableStateOf(options[0].name) }
-    var sliderPosition by remember { mutableStateOf(0f) }
     Column(
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        ExpandedPantryItem(item = item, ingredient = ingredient, onEditIconClicked = onEditIconClicked, onItemClicked = onItemClicked)
+        ExpandedPantryItem(
+            item = item,
+            ingredient = ingredient,
+            onEditIconClicked = onEditIconClicked,
+            onItemClicked = onItemClicked
+        )
         Column(modifier = Modifier.padding(10.dp)) {
             TextField(
-                value = "podaj nazwe",
+                value = item.inputProductName,
                 label = { Text(text = "Product name") },
-                onValueChange = {},
+                onValueChange = { onInputProductNameValueChange(item, it) },
                 modifier = Modifier
                     .padding(bottom = 5.dp)
                     .fillMaxWidth()
             )
-            Row (modifier = Modifier.fillMaxWidth()){
-                TextField(value = "MM/DD/YYYY",
+            Row(modifier = Modifier.fillMaxWidth()) {
+                TextField(
+                    value = "MM/DD/YYYY",
                     label = { Text(text = "Placed date") },
                     onValueChange = {},
                     modifier = Modifier
@@ -55,7 +66,8 @@ fun EditablePantryItem(item: Pantry, ingredient: Ingredient, onItemClicked: () -
                         .padding(bottom = 5.dp, end = 10.dp)
                         .weight(1f)
                 )
-                TextField(value = "MM/DD/YYYY",
+                TextField(
+                    value = "MM/DD/YYYY",
                     label = { Text(text = "Expire date") },
                     onValueChange = {},
                     modifier = Modifier
@@ -102,15 +114,17 @@ fun EditablePantryItem(item: Pantry, ingredient: Ingredient, onItemClicked: () -
                     }
                 }
             }
-            Text(text = sliderPosition.toString(), modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentWidth(Alignment.CenterHorizontally))
+            Text(
+                text = item.sliderPosition.toString(), modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentWidth(Alignment.CenterHorizontally)
+            )
             LazyRow(modifier = Modifier.height(100.dp)) {
                 item {
                     Column(modifier = Modifier) {
                         Slider(
-                            value = sliderPosition,
-                            onValueChange = { sliderPosition = it },
+                            value = item.sliderPosition,
+                            onValueChange = { onSliderValueChange(item, it) },
                             valueRange = 0f..50f,
                             onValueChangeFinished = {
                                 // launch some business logic update with the state you hold
@@ -144,16 +158,25 @@ fun EditablePantryItem(item: Pantry, ingredient: Ingredient, onItemClicked: () -
 }
 
 @Composable
-fun ExpandedPantryItem(item: Pantry, ingredient: Ingredient, onItemClicked: () -> Unit, onEditIconClicked: () -> Unit) {
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .padding(10.dp)
-        .clickable(
-            onClick = onItemClicked,
-            indication = null,
-            interactionSource = remember { MutableInteractionSource() }
-        )) {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+fun ExpandedPantryItem(
+    item: PantryItemUiState,
+    ingredient: Ingredient,
+    onItemClicked: (PantryItemUiState) -> Unit,
+    onEditIconClicked: (PantryItemUiState) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+            .clickable(onClick = { onItemClicked(item) },
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() })
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(text = ingredient.name, style = MaterialTheme.typography.labelLarge)
             Row(modifier = Modifier) {
                 IconButton(onClick = {}) {
@@ -162,7 +185,7 @@ fun ExpandedPantryItem(item: Pantry, ingredient: Ingredient, onItemClicked: () -
                         contentDescription = ""
                     )
                 }
-                IconButton(onClick = onEditIconClicked) {
+                IconButton(onClick = { onEditIconClicked(item) }) {
                     Icon(
                         imageVector = Icons.Rounded.Edit,
                         contentDescription = ""
@@ -176,50 +199,90 @@ fun ExpandedPantryItem(item: Pantry, ingredient: Ingredient, onItemClicked: () -
                 }
             }
         }
-        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
-            Column(modifier = Modifier.weight(5f)) {
-                Text(text = item.name, style = MaterialTheme.typography.titleMedium)
-                Text(text = item.quantity.toString() + " " + item.unit, style = MaterialTheme.typography.labelSmall)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(text = item.pantry.name, style = MaterialTheme.typography.titleMedium)
+                Text(
+                    text = item.pantry.quantity.toString() + " " + item.pantry.unit,
+                    style = MaterialTheme.typography.labelSmall
+                )
                 Divider(modifier = Modifier.padding(top = 5.dp, bottom = 5.dp))
                 Row(modifier = Modifier) {
-                    Text(text = "Placed date:", modifier = Modifier.weight(1f), style = MaterialTheme.typography.titleSmall)
-                    Text(text = item.place_date.toString(), modifier = Modifier.weight(2f))
+                    Text(
+                        text = "Placed date:",
+                        modifier = Modifier.weight(1f),
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                    Text(text = item.pantry.place_date.toString(), modifier = Modifier.weight(3f))
                 }
 
                 Row(modifier = Modifier) {
-                    Text(text = "Expire date:", modifier = Modifier.weight(1f), style = MaterialTheme.typography.titleSmall)
-                    Text(text = item.expire_date.toString(), modifier = Modifier.weight(2f))
+                    Text(
+                        text = "Expire date:",
+                        modifier = Modifier.weight(1f),
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                    Text(text = item.pantry.expire_date.toString(), modifier = Modifier.weight(3f))
                 }
-            }
-            Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(5.dp)) {
-
             }
         }
     }
 }
 
 @Composable
-fun PantryItem(item: Pantry, ingredient: Ingredient) {
-    var isPantryCollapsed by remember{(mutableStateOf(true))}
-    var isPantryEdited by remember{ mutableStateOf(false)}
-    if (isPantryEdited) EditablePantryItem(item, ingredient, onItemClicked = {}, onEditIconClicked = {isPantryEdited = !isPantryEdited})
+fun PantryItem(
+    item: PantryItemUiState,
+    ingredient: Ingredient,
+    onItemClicked: (PantryItemUiState) -> Unit,
+    onEditIconClicked: (PantryItemUiState) -> Unit,
+    onInputProductNameValueChange: (PantryItemUiState, String) -> Unit,
+    onSliderValueChange: (PantryItemUiState, Float) -> Unit
+) {
+    if (item.isPantryEdited) EditablePantryItem(
+        item = item,
+        ingredient = ingredient,
+        onItemClicked = {},
+        onEditIconClicked = onEditIconClicked,
+        onInputProductNameValueChange = onInputProductNameValueChange,
+        onSliderValueChange = onSliderValueChange
+    )
     else {
-        if (isPantryCollapsed) CollapsedPantryItem(item = item, onItemClicked = {isPantryCollapsed = !isPantryCollapsed}, onEditIconClicked = {isPantryEdited = !isPantryEdited})
-        else ExpandedPantryItem(item = item, ingredient = ingredient, onItemClicked = {isPantryCollapsed = !isPantryCollapsed}, onEditIconClicked = {isPantryEdited = !isPantryEdited})
+        if (item.isPantryCollapsed) CollapsedPantryItem(
+            item = item, onItemClicked = onItemClicked, onEditIconClicked = onEditIconClicked
+        )
+        else ExpandedPantryItem(
+            item = item,
+            ingredient = ingredient,
+            onItemClicked = onItemClicked,
+            onEditIconClicked = onEditIconClicked
+        )
     }
 }
 
 @Composable
-fun CollapsedPantryItem(item: Pantry, onItemClicked: () -> Unit, onEditIconClicked: () -> Unit) {
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .padding(10.dp)
-        .clickable(onClick = onItemClicked,
-            indication = null,
-            interactionSource = remember { MutableInteractionSource() }
-        ),
-        horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-        Text(text = item.name, style = MaterialTheme.typography.titleMedium)
+fun CollapsedPantryItem(
+    item: PantryItemUiState,
+    onItemClicked: (PantryItemUiState) -> Unit,
+    onEditIconClicked: (PantryItemUiState) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+            .clickable(onClick = { onItemClicked(item) },
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = item.pantry.name,
+            style = MaterialTheme.typography.titleMedium
+        )
         Row(modifier = Modifier) {
             IconButton(onClick = {}) {
                 Icon(
@@ -227,7 +290,7 @@ fun CollapsedPantryItem(item: Pantry, onItemClicked: () -> Unit, onEditIconClick
                     contentDescription = ""
                 )
             }
-            IconButton(onClick = onEditIconClicked) {
+            IconButton(onClick = { onEditIconClicked(item) }) {
                 Icon(
                     imageVector = Icons.Rounded.Edit,
                     contentDescription = ""
@@ -250,73 +313,3 @@ fun CheckoutScreenPrev() {
     CheckoutScreen()
 }
 
-@Preview (showBackground = true)
-@Composable
-fun CheckoutItemExpandedPrev() {
-    EditablePantryItem(item = Pantry(1, "Złociste jabłko", "", Calendar.getInstance().time, Calendar.getInstance().time, 0.6f, "KG", 1), ingredient = Ingredient(1, "Apple", "", "", ""), {}, {})
-}
-
-@Preview (showBackground = true)
-@Composable
-fun CheckoutItemCollapsedPrev() {
-    Column(modifier = Modifier.padding(10.dp)) {
-
-    }
-}
-
-@Preview (showBackground = true)
-@Composable
-fun CollapsedPantryItemPrev() {
-    Column(modifier = Modifier) {
-
-    }
-}
-
-@Preview (showBackground = true)
-@Composable
-fun PantryItemPrev() {
-    LazyColumn(modifier = Modifier) {
-        item  {
-            PantryItem(
-                item = Pantry(
-                    1,
-                    "Pomarańcza",
-                    "",
-                    Calendar.getInstance().time,
-                    Calendar.getInstance().time,
-                    1f,
-                    "PSC",
-                    1
-                ), ingredient = Ingredient(1, "Orange", "", "", "")
-            )
-        }
-        item {
-            PantryItem(
-                item = Pantry(
-                    1,
-                    "Złociste jabłko",
-                    "",
-                    Calendar.getInstance().time,
-                    Calendar.getInstance().time,
-                    0.6f,
-                    "KG",
-                    1
-                ), ingredient = Ingredient(1, "Apple", "", "", "")
-            )
-        }
-        item {
-            PantryItem(
-                item = Pantry(
-                    1,
-                    "Krewetki - Lidl",
-                    "",
-                    Calendar.getInstance().time,
-                    Calendar.getInstance().time,
-                    1.2f,
-                    "KG",
-                    1
-                ), ingredient = Ingredient(1, "Shrimp", "", "", "")
-            )
-        }
-    }
-}
