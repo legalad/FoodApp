@@ -1,5 +1,6 @@
 package com.example.foodapp.ui.ingredients
 
+import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -22,7 +23,7 @@ import com.example.foodapp.R
 import com.example.foodapp.data.Ingredient
 import com.example.foodapp.model.IngredientUiState
 import com.example.foodapp.model.PantryItemUiState
-import com.example.foodapp.ui.checkout.PantryItem
+import com.example.foodapp.ui.components.PantryItem
 import com.example.foodapp.ui.components.SearchTextField
 
 
@@ -173,33 +174,55 @@ fun IngredientsScreen(viewModel: IngredientsViewModel, modifier: Modifier = Modi
     } else AddPantryItemsScreen(
         pantryItems = uiState.pantryItemList,
         onItemClicked = viewModel::onItemButtonClicked,
+        onAddIconClicked = viewModel::onAddItemButtonClicked,
         onEditIconClicked = viewModel::onEditItemButtonClicked,
+        onDeleteIconClicked = viewModel::onDeleteItemButtonClicked,
         onInputProductNameValueChange = viewModel::onInputProductNameValueChange,
-        onSliderValueChange = viewModel::onSliderValueChange
+        onSliderValueChange = viewModel::onSliderValueChange,
+        onBackedPressed = viewModel::onBackedPressed
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddPantryItemsScreen(
     pantryItems: List<PantryItemUiState>,
     onItemClicked: (PantryItemUiState) -> Unit,
+    onAddIconClicked: (PantryItemUiState) -> Unit,
     onEditIconClicked: (PantryItemUiState) -> Unit,
+    onDeleteIconClicked: (PantryItemUiState) -> Unit,
     onInputProductNameValueChange: (PantryItemUiState, String) -> Unit,
-    onSliderValueChange: (PantryItemUiState, Float) -> Unit
+    onSliderValueChange: (PantryItemUiState, Float) -> Unit,
+    onBackedPressed: () -> Unit = {}
 ) {
-    LazyColumn(modifier = Modifier.fillMaxWidth()) {
-        items(pantryItems) { item ->
-            Card(modifier = Modifier.padding(5.dp)) {
-                PantryItem(
-                    item = item,
-                    ingredient = Ingredient(0, "Apple", "Ap", "Ap", "Ap"),
-                    onItemClicked = onItemClicked,
-                    onEditIconClicked = onEditIconClicked,
-                    onInputProductNameValueChange = onInputProductNameValueChange,
-                    onSliderValueChange = onSliderValueChange
-                )
+    Scaffold(
+        floatingActionButton = {ExtendedFloatingActionButton(onClick = { /*TODO*/ }) {
+            Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+                Icon(imageVector = Icons.Filled.Add, contentDescription = "add", modifier = Modifier.padding(end = 5.dp))
+                Text(text = "Add ${pantryItems.size} items" )
+            }
+        }},
+        floatingActionButtonPosition = FabPosition.Center,
+        content =  { innerPadding ->
+        LazyColumn(modifier = Modifier.fillMaxWidth().padding(innerPadding)) {
+            items(pantryItems) { item ->
+                Card(modifier = Modifier.padding(5.dp)) {
+                    PantryItem(
+                        item = item,
+                        ingredient = Ingredient(0, "Apple", "Ap", "Ap", "Ap"),
+                        onItemClicked = onItemClicked,
+                        onAddIconClicked = onAddIconClicked,
+                        onEditIconClicked = onEditIconClicked,
+                        onDeleteIconClicked = onDeleteIconClicked,
+                        onInputProductNameValueChange = onInputProductNameValueChange,
+                        onSliderValueChange = onSliderValueChange
+                    )
+                }
             }
         }
+    })
+    BackHandler {
+        onBackedPressed()
     }
 }
 

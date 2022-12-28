@@ -1,4 +1,4 @@
-package com.example.foodapp.ui.checkout
+package com.example.foodapp.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -21,7 +21,169 @@ import java.util.*
 
 @Composable
 fun CheckoutScreen(){
+}
 
+@Composable
+fun PantryItem(
+    item: PantryItemUiState,
+    ingredient: Ingredient,
+    onItemClicked: (PantryItemUiState) -> Unit,
+    onAddIconClicked: (PantryItemUiState) -> Unit,
+    onEditIconClicked: (PantryItemUiState) -> Unit,
+    onDeleteIconClicked: (PantryItemUiState) -> Unit,
+    onInputProductNameValueChange: (PantryItemUiState, String) -> Unit,
+    onSliderValueChange: (PantryItemUiState, Float) -> Unit
+) {
+    if (item.isPantryEdited) EditablePantryItem(
+        item = item,
+        ingredient = ingredient,
+        onItemClicked = {},
+        onAddIconClicked = onAddIconClicked,
+        onEditIconClicked = onEditIconClicked,
+        onDeleteIconClicked = onDeleteIconClicked,
+        onInputProductNameValueChange = onInputProductNameValueChange,
+        onSliderValueChange = onSliderValueChange
+    )
+    else {
+        if (item.isPantryCollapsed) CollapsedPantryItem(
+            item = item,
+            onItemClicked = onItemClicked,
+            onAddIconClicked = onAddIconClicked,
+            onEditIconClicked = onEditIconClicked,
+            onDeleteIconClicked = onDeleteIconClicked
+        )
+        else ExpandedPantryItem(
+            item = item,
+            ingredient = ingredient,
+            onItemClicked = onItemClicked,
+            onAddIconClicked = onAddIconClicked,
+            onEditIconClicked = onEditIconClicked,
+            onDeleteIconClicked = onDeleteIconClicked
+        )
+    }
+}
+
+@Composable
+fun CollapsedPantryItem(
+    item: PantryItemUiState,
+    onItemClicked: (PantryItemUiState) -> Unit,
+    onAddIconClicked: (PantryItemUiState) -> Unit,
+    onEditIconClicked: (PantryItemUiState) -> Unit,
+    onDeleteIconClicked: (PantryItemUiState) -> Unit
+    ) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+            .clickable(onClick = { onItemClicked(item) },
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = item.pantry.name,
+            style = MaterialTheme.typography.titleMedium
+        )
+        Row(modifier = Modifier) {
+            IconButton(onClick = { onAddIconClicked(item) }) {
+                Icon(
+                    imageVector = Icons.Rounded.Add,
+                    contentDescription = ""
+                )
+            }
+            IconButton(onClick = { onEditIconClicked(item) }) {
+                Icon(
+                    imageVector = Icons.Rounded.Edit,
+                    contentDescription = ""
+                )
+            }
+            IconButton(onClick = { onDeleteIconClicked(item) }) {
+                Icon(
+                    imageVector = Icons.Rounded.Delete,
+                    contentDescription = ""
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ExpandedPantryItem(
+    item: PantryItemUiState,
+    ingredient: Ingredient,
+    onItemClicked: (PantryItemUiState) -> Unit,
+    onAddIconClicked: (PantryItemUiState) -> Unit,
+    onEditIconClicked: (PantryItemUiState) -> Unit,
+    onDeleteIconClicked: (PantryItemUiState) -> Unit
+    ) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+            .clickable(onClick = { onItemClicked(item) },
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() })
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = ingredient.name, style = MaterialTheme.typography.labelLarge)
+            Row(modifier = Modifier) {
+                IconButton(onClick = { onAddIconClicked(item) }) {
+                    Icon(
+                        imageVector = Icons.Rounded.Add,
+                        contentDescription = ""
+                    )
+                }
+                IconButton(onClick = { onEditIconClicked(item) }) {
+                    Icon(
+                        imageVector = Icons.Rounded.Edit,
+                        contentDescription = ""
+                    )
+                }
+                IconButton(onClick = { onDeleteIconClicked(item) }) {
+                    Icon(
+                        imageVector = Icons.Rounded.Delete,
+                        contentDescription = ""
+                    )
+                }
+            }
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(text = item.pantry.name, style = MaterialTheme.typography.titleMedium)
+                Text(
+                    text = item.pantry.quantity.toString() + " " + item.pantry.unit,
+                    style = MaterialTheme.typography.labelSmall
+                )
+                Divider(modifier = Modifier.padding(top = 5.dp, bottom = 5.dp))
+                Row(modifier = Modifier) {
+                    Text(
+                        text = "Placed date:",
+                        modifier = Modifier.weight(1f),
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                    Text(text = item.pantry.place_date.toString(), modifier = Modifier.weight(3f))
+                }
+
+                Row(modifier = Modifier) {
+                    Text(
+                        text = "Expire date:",
+                        modifier = Modifier.weight(1f),
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                    Text(text = item.pantry.expire_date.toString(), modifier = Modifier.weight(3f))
+                }
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,7 +192,9 @@ fun EditablePantryItem(
     item: PantryItemUiState,
     ingredient: Ingredient,
     onItemClicked: (PantryItemUiState) -> Unit,
+    onAddIconClicked: (PantryItemUiState) -> Unit,
     onEditIconClicked: (PantryItemUiState) -> Unit,
+    onDeleteIconClicked: (PantryItemUiState) -> Unit,
     onInputProductNameValueChange: (PantryItemUiState, String) -> Unit,
     onSliderValueChange: (PantryItemUiState, Float) -> Unit
 ) {
@@ -44,8 +208,10 @@ fun EditablePantryItem(
         ExpandedPantryItem(
             item = item,
             ingredient = ingredient,
+            onAddIconClicked = onAddIconClicked,
             onEditIconClicked = onEditIconClicked,
-            onItemClicked = onItemClicked
+            onItemClicked = onItemClicked,
+            onDeleteIconClicked = onDeleteIconClicked
         )
         Column(modifier = Modifier.padding(10.dp)) {
             TextField(
@@ -157,154 +323,7 @@ fun EditablePantryItem(
     }
 }
 
-@Composable
-fun ExpandedPantryItem(
-    item: PantryItemUiState,
-    ingredient: Ingredient,
-    onItemClicked: (PantryItemUiState) -> Unit,
-    onEditIconClicked: (PantryItemUiState) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp)
-            .clickable(onClick = { onItemClicked(item) },
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() })
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = ingredient.name, style = MaterialTheme.typography.labelLarge)
-            Row(modifier = Modifier) {
-                IconButton(onClick = {}) {
-                    Icon(
-                        imageVector = Icons.Rounded.Add,
-                        contentDescription = ""
-                    )
-                }
-                IconButton(onClick = { onEditIconClicked(item) }) {
-                    Icon(
-                        imageVector = Icons.Rounded.Edit,
-                        contentDescription = ""
-                    )
-                }
-                IconButton(onClick = {}) {
-                    Icon(
-                        imageVector = Icons.Rounded.Delete,
-                        contentDescription = ""
-                    )
-                }
-            }
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Text(text = item.pantry.name, style = MaterialTheme.typography.titleMedium)
-                Text(
-                    text = item.pantry.quantity.toString() + " " + item.pantry.unit,
-                    style = MaterialTheme.typography.labelSmall
-                )
-                Divider(modifier = Modifier.padding(top = 5.dp, bottom = 5.dp))
-                Row(modifier = Modifier) {
-                    Text(
-                        text = "Placed date:",
-                        modifier = Modifier.weight(1f),
-                        style = MaterialTheme.typography.titleSmall
-                    )
-                    Text(text = item.pantry.place_date.toString(), modifier = Modifier.weight(3f))
-                }
 
-                Row(modifier = Modifier) {
-                    Text(
-                        text = "Expire date:",
-                        modifier = Modifier.weight(1f),
-                        style = MaterialTheme.typography.titleSmall
-                    )
-                    Text(text = item.pantry.expire_date.toString(), modifier = Modifier.weight(3f))
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun PantryItem(
-    item: PantryItemUiState,
-    ingredient: Ingredient,
-    onItemClicked: (PantryItemUiState) -> Unit,
-    onEditIconClicked: (PantryItemUiState) -> Unit,
-    onInputProductNameValueChange: (PantryItemUiState, String) -> Unit,
-    onSliderValueChange: (PantryItemUiState, Float) -> Unit
-) {
-    if (item.isPantryEdited) EditablePantryItem(
-        item = item,
-        ingredient = ingredient,
-        onItemClicked = {},
-        onEditIconClicked = onEditIconClicked,
-        onInputProductNameValueChange = onInputProductNameValueChange,
-        onSliderValueChange = onSliderValueChange
-    )
-    else {
-        if (item.isPantryCollapsed) CollapsedPantryItem(
-            item = item, onItemClicked = onItemClicked, onEditIconClicked = onEditIconClicked
-        )
-        else ExpandedPantryItem(
-            item = item,
-            ingredient = ingredient,
-            onItemClicked = onItemClicked,
-            onEditIconClicked = onEditIconClicked
-        )
-    }
-}
-
-@Composable
-fun CollapsedPantryItem(
-    item: PantryItemUiState,
-    onItemClicked: (PantryItemUiState) -> Unit,
-    onEditIconClicked: (PantryItemUiState) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp)
-            .clickable(onClick = { onItemClicked(item) },
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = item.pantry.name,
-            style = MaterialTheme.typography.titleMedium
-        )
-        Row(modifier = Modifier) {
-            IconButton(onClick = {}) {
-                Icon(
-                    imageVector = Icons.Rounded.Add,
-                    contentDescription = ""
-                )
-            }
-            IconButton(onClick = { onEditIconClicked(item) }) {
-                Icon(
-                    imageVector = Icons.Rounded.Edit,
-                    contentDescription = ""
-                )
-            }
-            IconButton(onClick = {}) {
-                Icon(
-                    imageVector = Icons.Rounded.Delete,
-                    contentDescription = ""
-                )
-            }
-        }
-    }
-}
 
 
 @Preview

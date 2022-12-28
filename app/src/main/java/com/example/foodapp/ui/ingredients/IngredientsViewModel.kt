@@ -47,6 +47,8 @@ class IngredientsViewModel @Inject constructor(
         }
     }
 
+    //Search text box logic
+
     fun onSearchTextFieldValueChange (input: String) {
         _ingredientsUiState.update {
             it.copy(
@@ -57,12 +59,13 @@ class IngredientsViewModel @Inject constructor(
 
     fun onCancelClicked() {
         _ingredientsUiState.update {
-
             it.copy(
                 input = it.input.drop(it.input.length)
             )
         }
     }
+
+    //Adding generic ingredients logic
 
     fun onCheckedChange(ingredientUiState: IngredientUiState){
         val temp = _ingredientsUiState.value.ingredientList.toMutableList()
@@ -77,16 +80,14 @@ class IngredientsViewModel @Inject constructor(
         }
     }
 
-    fun onEditItemButtonClicked(item: PantryItemUiState){
-        val tmp = _ingredientsUiState.value.pantryItemList.toMutableList()
-        val index = tmp.indexOf(item)
-        tmp[index] = tmp[index].copy(isPantryEdited = !tmp[index].isPantryEdited)
+    fun onAddFabClicked(){
+        val tmp = _ingredientsUiState.value.ingredientList.filter { it.selected }.map { Mappers.fromPantryItemToPantryItemUiState(Mappers.fromIngredientToPantry(it.ingredient)) }
         _ingredientsUiState.update {
-            it.copy(
-                pantryItemList = tmp
-            )
+            it.copy(addingScreen = true, pantryItemList = tmp)
         }
     }
+
+    //Item logic (operation on items)
 
     fun onItemButtonClicked(item: PantryItemUiState){
         val tmp = _ingredientsUiState.value.pantryItemList.toMutableList()
@@ -98,6 +99,44 @@ class IngredientsViewModel @Inject constructor(
             )
         }
     }
+
+    fun onAddItemButtonClicked(item: PantryItemUiState){
+        val tmp = _ingredientsUiState.value.pantryItemList.toMutableList()
+        val index = tmp.indexOf(item) + 1
+        tmp.add(index, item)
+        _ingredientsUiState.update {
+            it.copy(
+                pantryItemList = tmp
+            )
+        }
+
+    }
+
+    fun onEditItemButtonClicked(item: PantryItemUiState){
+        val tmp = _ingredientsUiState.value.pantryItemList.toMutableList()
+        val index = tmp.indexOf(item)
+        tmp[index] = tmp[index].copy(isPantryEdited = !tmp[index].isPantryEdited)
+        _ingredientsUiState.update {
+            it.copy(
+                pantryItemList = tmp
+            )
+        }
+    }
+
+    fun onDeleteItemButtonClicked(item: PantryItemUiState){
+        val tmp = _ingredientsUiState.value.pantryItemList.toMutableList()
+        val tmp2 = _ingredientsUiState.value.ingredientList.toMutableList()
+        val index = tmp.indexOf(item)
+        val ingredientId = tmp[index].pantry.ingredient_id
+        tmp.remove(item)
+        tmp2.find { it.ingredient.id == ingredientId }?.let { onCheckedChange(it) }
+        _ingredientsUiState.update {
+            it.copy(
+                pantryItemList = tmp
+            )
+        }
+    }
+
 
     fun onInputProductNameValueChange(item: PantryItemUiState, value: String){
         val tmp = _ingredientsUiState.value.pantryItemList.toMutableList()
@@ -121,6 +160,14 @@ class IngredientsViewModel @Inject constructor(
         }
     }
 
+    fun onBackedPressed() {
+        _ingredientsUiState.update {
+            it.copy(
+                addingScreen = false
+            )
+        }
+    }
+
 
 
     fun hideKeyboard() {
@@ -139,12 +186,7 @@ class IngredientsViewModel @Inject constructor(
         }
     }
 
-    fun onAddFabClicked(){
-        val tmp = _ingredientsUiState.value.ingredientList.filter { it.selected }.map { Mappers.fromPantryItemToPantryItemUiState(Mappers.fromIngredientToPantry(it.ingredient)) }
-        _ingredientsUiState.update {
-            it.copy(addingScreen = true, pantryItemList = tmp)
-        }
-    }
+
 
 
 }
