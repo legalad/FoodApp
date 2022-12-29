@@ -177,6 +177,7 @@ fun IngredientsScreen(viewModel: IngredientsViewModel, modifier: Modifier = Modi
         onAddIconClicked = viewModel::onAddItemButtonClicked,
         onEditIconClicked = viewModel::onEditItemButtonClicked,
         onDeleteIconClicked = viewModel::onDeleteItemButtonClicked,
+        onFabClicked = viewModel::onAddToPantryFabClicked,
         onInputProductNameValueChange = viewModel::onInputProductNameValueChange,
         onSliderValueChange = viewModel::onSliderValueChange,
         onBackedPressed = viewModel::onBackedPressed
@@ -191,12 +192,13 @@ fun AddPantryItemsScreen(
     onAddIconClicked: (PantryItemUiState) -> Unit,
     onEditIconClicked: (PantryItemUiState) -> Unit,
     onDeleteIconClicked: (PantryItemUiState) -> Unit,
+    onFabClicked: () -> Unit,
     onInputProductNameValueChange: (PantryItemUiState, String) -> Unit,
     onSliderValueChange: (PantryItemUiState, Float) -> Unit,
     onBackedPressed: () -> Unit = {}
 ) {
     Scaffold(
-        floatingActionButton = {ExtendedFloatingActionButton(onClick = { /*TODO*/ }) {
+        floatingActionButton = {ExtendedFloatingActionButton(onClick = onFabClicked) {
             Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
                 Icon(imageVector = Icons.Filled.Add, contentDescription = "add", modifier = Modifier.padding(end = 5.dp))
                 Text(text = "Add ${pantryItems.size} items" )

@@ -18,23 +18,12 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.foodapp.R
-import com.example.foodapp.ui.components.SearchTextField
 import com.example.foodapp.ui.ingredients.IngredientTypes
+import com.example.foodapp.ui.pantry.PantryViewModel
+
 
 @Composable
-fun PantryScreen() {
-    Column (modifier = Modifier.fillMaxSize()){
-        SearchTextField(
-            onStartValue = "test",
-            onValueChange = {},
-            label = { Text(text = "Search ingredient")},
-            modifier = Modifier.fillMaxWidth(), onCancelClicked = {})
-        Pantry()
-    }
-}
-
-@Composable
-fun Pantry() {
+fun PantryScreen(viewModel: PantryViewModel) {
     Column (modifier = Modifier.padding(20.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Row {
@@ -151,7 +140,7 @@ fun PantryTypeExpandedListItemPrev() {
 @Preview (showBackground = true)
 @Composable
 fun PantryScreenPrev() {
-    PantryScreen()
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -1,6 +1,7 @@
 package com.example.foodapp.data.source
 
 import com.example.foodapp.data.Ingredient
+import com.example.foodapp.data.Pantry
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -14,8 +15,11 @@ class DefaultIngredientRepository (
         return ingredientLocalDataSource.getIngredients()
     }
 
-    override suspend fun addIngredient(ingredient: Ingredient) {
-        ingredientLocalDataSource.addIngredient(ingredient)
+    override suspend fun addIngredientToPantry(pantry: Pantry) {
+        ingredientLocalDataSource.addIngredientToPantry(pantry)
     }
 
+    override suspend fun addPantryItemList(pantryList: List<Pantry>) {
+        ingredientLocalDataSource.addPantryItemList(pantryList)
+    }
 }

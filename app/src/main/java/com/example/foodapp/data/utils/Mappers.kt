@@ -30,7 +30,12 @@ class Mappers {
         }
 
         fun fromPantryItemToPantryItemUiState(pantryItem: Pantry): PantryItemUiState {
-            return PantryItemUiState(pantry = pantryItem, inputProductName = pantryItem.name)
+            return PantryItemUiState(
+                pantry = pantryItem,
+                inputProductName = pantryItem.name,
+                selectedOptionText = pantryItem.unit,
+                sliderPosition = pantryItem.quantity
+                )
         }
     }
 }

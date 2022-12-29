@@ -87,6 +87,15 @@ class IngredientsViewModel @Inject constructor(
         }
     }
 
+    fun onAddToPantryFabClicked(){
+        viewModelScope.launch {
+            ingredientRepository.addPantryItemList(_ingredientsUiState.value.pantryItemList.map { it.pantry })
+        }
+        _ingredientsUiState.update {
+            it.copy(addingScreen = false)
+        }
+    }
+
     //Item logic (operation on items)
 
     fun onItemButtonClicked(item: PantryItemUiState){

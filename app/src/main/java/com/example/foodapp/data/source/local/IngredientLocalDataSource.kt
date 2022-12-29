@@ -1,6 +1,7 @@
 package com.example.foodapp.data.source.local
 
 import com.example.foodapp.data.Ingredient
+import com.example.foodapp.data.Pantry
 import com.example.foodapp.data.source.IngredientDataSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +16,11 @@ class IngredientLocalDataSource internal constructor(
         ingredientDao.getIngredients()
     }
 
-    override suspend fun addIngredient(ingredient: Ingredient) = withContext(ioDispatcher) {
-        ingredientDao.addIngredient(ingredient)
+    override suspend fun addIngredientToPantry(pantry: Pantry) = withContext(ioDispatcher) {
+        ingredientDao.addPantryItem(pantry)
+    }
+
+    override suspend fun addPantryItemList(pantryList: List<Pantry>) = withContext(ioDispatcher) {
+        ingredientDao.addPantryItemList(pantryList)
     }
 }
