@@ -1,14 +1,16 @@
 package com.example.foodapp.ui.screens
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,12 +20,19 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.foodapp.R
+import com.example.foodapp.data.Ingredient
+import com.example.foodapp.model.PantryItemUiState
+import com.example.foodapp.ui.components.PantryItem
 import com.example.foodapp.ui.ingredients.IngredientTypes
 import com.example.foodapp.ui.pantry.PantryViewModel
 
 
 @Composable
 fun PantryScreen(viewModel: PantryViewModel) {
+
+    val uiState by viewModel.pantryUiState.collectAsState()
+
+
     Column (modifier = Modifier.padding(20.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Row {
@@ -35,30 +44,17 @@ fun PantryScreen(viewModel: PantryViewModel) {
                 )
                 Column {
                     Text(text = "Pantry")
-                    Text(text = "Pantry details", style = MaterialTheme.typography.bodySmall)
+                    Text(text = "Total items: ${uiState.pantryItemsList.size}", style = MaterialTheme.typography.bodySmall)
                 }
             }
             Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = "")
         }
         Divider()
         LazyColumn {
-            item {
-                PantryType(IngredientTypes.FRUITS, true)
-            }
-            item {
-                PantryType(ingredientTypes = IngredientTypes.CANDIES, true)
-            }
-            item {
-                PantryType(ingredientTypes = IngredientTypes.DAIRY, false)
-            }
-            item {
-                PantryType(ingredientTypes = IngredientTypes.FISHES, true)
-            }
-            item {
-                PantryType(ingredientTypes = IngredientTypes.MEATS, true)
-            }
-            item {
-                PantryType(ingredientTypes = IngredientTypes.SPICES, false)
+
+            itemsIndexed(IngredientTypes.values()){
+                index, item ->
+                PantryType(ingredientTypes = item, viewModel.getFilteredPantryItemList(item))
             }
         }
     }
@@ -66,62 +62,59 @@ fun PantryScreen(viewModel: PantryViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PantryType (ingredientTypes: IngredientTypes, isExpanded: Boolean) {
+fun PantryType (ingredientTypes: IngredientTypes, pantryItemsMap: Map<PantryItemUiState, Ingredient>) {
+    var isExpanded by remember { mutableStateOf(true) }
         Column {
             Row (modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp, bottom = 10.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
                 Text(text = ingredientTypes.name)
-                Icon(painter = painterResource(id = R.drawable.ic_round_expand_more_24), contentDescription = "")
+                IconButton(onClick = { isExpanded = !isExpanded}) {
+                    if (isExpanded) Icon(painter = painterResource(id = R.drawable.ic_round_expand_more_24), contentDescription = "")
+                    else Icon(painter = painterResource(id = R.drawable.ic_round_expand_less_24), contentDescription = "")
+                }
             }
-            if (isExpanded) {PantryTypeCollapsed()}
+            if (isExpanded) {PantryTypeCollapsed(pantryItemsMap)}
             else {
-                PantryTypeExpanded()}
+                PantryTypeExpanded(pantryItemsMap)}
             Divider()
     }
 }
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun PantryTypeCollapsed() {
-    LazyRow(verticalAlignment = Alignment.Bottom) {
-        item {
-            ElevatedChipPantryItem()
-        }
-        item {
-            ElevatedAssistChip(onClick = { /*TODO*/ }, label = { Text(text = "") }, leadingIcon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.icons8_group_of_fruits_50),
-                    contentDescription = "",
-                    tint = Color.Unspecified
-                )
-            })
-        }
-        item {
-            ElevatedCardPantryItem()
-        }
-        items(6) {
-            ElevatedCardPantryItem()
-        }
+private fun PantryTypeCollapsed(pantryItemsMap: Map<PantryItemUiState, Ingredient>) {
+    Row(verticalAlignment = Alignment.Bottom, modifier = Modifier.horizontalScroll(rememberScrollState())) {
+
+        pantryItemsMap.forEach { (pantryItemUiState, ingredient) ->
+            ElevatedChipPantryItem(ingredient)  }
     }
 }
 
 
 @Composable
-fun PantryTypeExpanded() {
+fun PantryTypeExpanded(pantryItemsMap: Map<PantryItemUiState, Ingredient>) {
     Column {
-        PantryTypeExpandedListItem()
-        PantryTypeExpandedListItem()
-        PantryTypeExpandedListItem()
-        PantryTypeExpandedListItem()
-        PantryTypeExpandedListItem()
-        PantryTypeExpandedListItem()
+        pantryItemsMap.forEach { (pantryItemUiState, ingredient) ->
+            PantryItem(
+                item = pantryItemUiState,
+                ingredient = ingredient,
+                onItemClicked = { TODO() },
+                onAddIconClicked = { TODO() },
+                onEditIconClicked = { TODO() },
+                onDeleteIconClicked = { TODO() },
+                onInputProductNameValueChange = {it, on -> },
+                onSliderValueChange = {it, on -> }
+            )
+        }
     }
 }
 
 @Composable
 fun PantryTypeExpandedListItem() {
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth().padding(5.dp)) {
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier
+        .fillMaxWidth()
+        .padding(5.dp)) {
         Text(text = "item")
         Row {
             Icon(imageVector = Icons.Rounded.Edit, contentDescription = "Edit pantry item")
@@ -153,7 +146,7 @@ fun PantryItemPrev() {
 @Preview (showBackground = true)
 @Composable
 fun ElevatedChipPantryItemPrev() {
-    ElevatedChipPantryItem()
+    ElevatedChipPantryItem(Ingredient(0, "aaa", "aaa", "aaa", "aaa"))
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -188,7 +181,7 @@ fun ElevatedCardPantryItem() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ElevatedChipPantryItem() {
+fun ElevatedChipPantryItem(ingredient: Ingredient) {
     BadgedBox(
         badge = {
             Badge (modifier = Modifier.padding(0.dp)) {
@@ -203,6 +196,6 @@ fun ElevatedChipPantryItem() {
         }, modifier = Modifier
             .padding(top = 15.dp, end = 15.dp)
     ) {
-        ElevatedAssistChip(onClick = { /*TODO*/ }, { Text(text = "jabłko")})
+        ElevatedAssistChip(onClick = { /*TODO*/ }, { Text(text = ingredient.name)})
     }
 }

@@ -32,7 +32,8 @@ fun PantryItem(
     onEditIconClicked: (PantryItemUiState) -> Unit,
     onDeleteIconClicked: (PantryItemUiState) -> Unit,
     onInputProductNameValueChange: (PantryItemUiState, String) -> Unit,
-    onSliderValueChange: (PantryItemUiState, Float) -> Unit
+    onSliderValueChange: (PantryItemUiState, Float) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     if (item.isPantryEdited) EditablePantryItem(
         item = item,
@@ -42,7 +43,8 @@ fun PantryItem(
         onEditIconClicked = onEditIconClicked,
         onDeleteIconClicked = onDeleteIconClicked,
         onInputProductNameValueChange = onInputProductNameValueChange,
-        onSliderValueChange = onSliderValueChange
+        onSliderValueChange = onSliderValueChange,
+        modifier = modifier
     )
     else {
         if (item.isPantryCollapsed) CollapsedPantryItem(
@@ -50,7 +52,8 @@ fun PantryItem(
             onItemClicked = onItemClicked,
             onAddIconClicked = onAddIconClicked,
             onEditIconClicked = onEditIconClicked,
-            onDeleteIconClicked = onDeleteIconClicked
+            onDeleteIconClicked = onDeleteIconClicked,
+            modifier = modifier
         )
         else ExpandedPantryItem(
             item = item,
@@ -58,7 +61,8 @@ fun PantryItem(
             onItemClicked = onItemClicked,
             onAddIconClicked = onAddIconClicked,
             onEditIconClicked = onEditIconClicked,
-            onDeleteIconClicked = onDeleteIconClicked
+            onDeleteIconClicked = onDeleteIconClicked,
+            modifier = modifier
         )
     }
 }
@@ -69,12 +73,12 @@ fun CollapsedPantryItem(
     onItemClicked: (PantryItemUiState) -> Unit,
     onAddIconClicked: (PantryItemUiState) -> Unit,
     onEditIconClicked: (PantryItemUiState) -> Unit,
-    onDeleteIconClicked: (PantryItemUiState) -> Unit
+    onDeleteIconClicked: (PantryItemUiState) -> Unit,
+    modifier: Modifier = Modifier
     ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(10.dp)
             .clickable(onClick = { onItemClicked(item) },
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }),
@@ -115,10 +119,11 @@ fun ExpandedPantryItem(
     onItemClicked: (PantryItemUiState) -> Unit,
     onAddIconClicked: (PantryItemUiState) -> Unit,
     onEditIconClicked: (PantryItemUiState) -> Unit,
-    onDeleteIconClicked: (PantryItemUiState) -> Unit
+    onDeleteIconClicked: (PantryItemUiState) -> Unit,
+    modifier: Modifier = Modifier
     ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(10.dp)
             .clickable(onClick = { onItemClicked(item) },
@@ -196,7 +201,8 @@ fun EditablePantryItem(
     onEditIconClicked: (PantryItemUiState) -> Unit,
     onDeleteIconClicked: (PantryItemUiState) -> Unit,
     onInputProductNameValueChange: (PantryItemUiState, String) -> Unit,
-    onSliderValueChange: (PantryItemUiState, Float) -> Unit
+    onSliderValueChange: (PantryItemUiState, Float) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val options = Units.values()
     var expanded by remember { mutableStateOf(false) }

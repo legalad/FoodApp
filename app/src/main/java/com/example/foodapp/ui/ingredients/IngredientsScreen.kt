@@ -29,36 +29,48 @@ import com.example.foodapp.ui.components.SearchTextField
 
 enum class IngredientTypes(
     @DrawableRes val iconId: Int,
-    val filter: (List<IngredientUiState>) -> List<IngredientUiState>
+    val filter: (List<IngredientUiState>) -> List<IngredientUiState>,
+    val filterPantry: (Map<PantryItemUiState, Ingredient>) -> Map<PantryItemUiState, Ingredient>
 ) {
     VEGETABLES(
         R.drawable.icons8_group_of_vegetables_50,
-        { it -> it.filter { it.ingredient.group == "Vegetables" } }),
+        { it -> it.filter { it.ingredient.group == "Vegetables" }},
+        { it -> it.filter { it.value.group == "Vegetables" }}),
     FRUITS(
         R.drawable.icons8_group_of_fruits_50,
-        { it -> it.filter { it.ingredient.group == "Fruits" } }),
+        { it -> it.filter { it.ingredient.group == "Fruits" } },
+        { it -> it.filter { it.value.group == "Fruits" }}),
     MEATS(
         R.drawable.icons8_steak_50,
-        { it -> it.filter { it.ingredient.group == "Animal foods" } }),
+        { it -> it.filter { it.ingredient.group == "Animal foods" } },
+        { it -> it.filter { it.value.group == "Animal foods" }}),
     DAIRY(
         R.drawable.icons8_milk_bottle_50,
-        { it -> it.filter { it.ingredient.group == "Milk and milk products" } }),
+        { it -> it.filter { it.ingredient.group == "Milk and milk products" } },
+        { it -> it.filter { it.value.group == "Milk and milk products" }}),
     GRAIN(
         R.drawable.icons8_soy_50,
-        { it -> it.filter { it.ingredient.group == "Cereals and cereal products" } }),
+        { it -> it.filter { it.ingredient.group == "Cereals and cereal products" } },
+        { it -> it.filter { it.value.group == "Cereals and cereal products" }}),
     FISHES(
         R.drawable.icons8_fish_food_50,
-        { it -> it.filter { it.ingredient.subGroup == "Fishes" } }),
+        { it -> it.filter { it.ingredient.subGroup == "Fishes" } },
+        { it -> it.filter { it.value.group == "Fishes" }}),
     SEAFOOD(
         R.drawable.icons8_prawn_50,
-        { it -> it.filter { it.ingredient.group == "Aquatic foods" && it.ingredient.subGroup != "Fishes" } }),
+        { it -> it.filter { it.ingredient.group == "Aquatic foods" && it.ingredient.subGroup != "Fishes" } },
+        { it -> it.filter { it.value.group == "Aquatic foods" && it.value.subGroup != "Fishes" }}),
     SPICES(
         R.drawable.icons8_black_pepper_50,
-        { it -> it.filter { it.ingredient.group == "Herbs and Spices" } }),
-    DRINKS(R.drawable.icons8_cola_50, { it -> it.filter { it.ingredient.group == "Beverages" } }),
+        { it -> it.filter { it.ingredient.group == "Herbs and Spices" } },
+        { it -> it.filter { it.value.group == "Herbs and Spices" }}),
+    DRINKS(R.drawable.icons8_cola_50,
+        { it -> it.filter { it.ingredient.group == "Beverages" } },
+        { it -> it.filter { it.value.group == "Beverages" }}),
     CANDIES(
         R.drawable.icons8_dessert_50,
-        { it -> it.filter { it.ingredient.group == "Confectioneries" } })
+        { it -> it.filter { it.ingredient.group == "Confectioneries" } },
+        { it -> it.filter { it.value.group == "Confectioneries" }})
 
 }
 
@@ -217,7 +229,8 @@ fun AddPantryItemsScreen(
                         onEditIconClicked = onEditIconClicked,
                         onDeleteIconClicked = onDeleteIconClicked,
                         onInputProductNameValueChange = onInputProductNameValueChange,
-                        onSliderValueChange = onSliderValueChange
+                        onSliderValueChange = onSliderValueChange,
+                        modifier = Modifier.padding(start = 10.dp, end = 10.dp)
                     )
                 }
             }
