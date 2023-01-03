@@ -192,6 +192,7 @@ fun IngredientsScreen(viewModel: IngredientsViewModel, modifier: Modifier = Modi
         onFabClicked = viewModel::onAddToPantryFabClicked,
         onInputProductNameValueChange = viewModel::onInputProductNameValueChange,
         onSliderValueChange = viewModel::onSliderValueChange,
+        onUpdateIconClicked = viewModel::onUpdateIconClicked,
         onBackedPressed = viewModel::onBackedPressed
     )
 }
@@ -207,6 +208,7 @@ fun AddPantryItemsScreen(
     onFabClicked: () -> Unit,
     onInputProductNameValueChange: (PantryItemUiState, String) -> Unit,
     onSliderValueChange: (PantryItemUiState, Float) -> Unit,
+    onUpdateIconClicked: (PantryItemUiState) -> Unit,
     onBackedPressed: () -> Unit = {}
 ) {
     Scaffold(
@@ -230,6 +232,7 @@ fun AddPantryItemsScreen(
                         onDeleteIconClicked = onDeleteIconClicked,
                         onInputProductNameValueChange = onInputProductNameValueChange,
                         onSliderValueChange = onSliderValueChange,
+                        onUpdateIconClicked = onUpdateIconClicked,
                         modifier = Modifier.padding(start = 10.dp, end = 10.dp)
                     )
                 }

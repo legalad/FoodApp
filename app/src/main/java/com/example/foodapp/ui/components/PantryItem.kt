@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -33,6 +34,7 @@ fun PantryItem(
     onDeleteIconClicked: (PantryItemUiState) -> Unit,
     onInputProductNameValueChange: (PantryItemUiState, String) -> Unit,
     onSliderValueChange: (PantryItemUiState, Float) -> Unit,
+    onUpdateIconClicked: (PantryItemUiState) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (item.isPantryEdited) EditablePantryItem(
@@ -44,6 +46,7 @@ fun PantryItem(
         onDeleteIconClicked = onDeleteIconClicked,
         onInputProductNameValueChange = onInputProductNameValueChange,
         onSliderValueChange = onSliderValueChange,
+        onUpdateIconClicked = onUpdateIconClicked,
         modifier = modifier
     )
     else {
@@ -125,7 +128,6 @@ fun ExpandedPantryItem(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(10.dp)
             .clickable(onClick = { onItemClicked(item) },
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() })
@@ -202,13 +204,14 @@ fun EditablePantryItem(
     onDeleteIconClicked: (PantryItemUiState) -> Unit,
     onInputProductNameValueChange: (PantryItemUiState, String) -> Unit,
     onSliderValueChange: (PantryItemUiState, Float) -> Unit,
+    onUpdateIconClicked: (PantryItemUiState) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val options = Units.values()
     var expanded by remember { mutableStateOf(false) }
     var selectedOptionText by remember { mutableStateOf(options[0].name) }
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
     ) {
         ExpandedPantryItem(
@@ -324,6 +327,9 @@ fun EditablePantryItem(
                         }
                     }
                 }
+            }
+            IconButton(onClick = { onUpdateIconClicked(item) }, modifier.fillMaxWidth().wrapContentWidth(Alignment.CenterHorizontally)) {
+                Icon(imageVector = Icons.Rounded.Done, contentDescription = "")
             }
         }
     }

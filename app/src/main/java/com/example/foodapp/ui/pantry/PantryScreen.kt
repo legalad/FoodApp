@@ -32,9 +32,12 @@ fun PantryScreen(viewModel: PantryViewModel) {
 
     val uiState by viewModel.pantryUiState.collectAsState()
 
-
-    Column (modifier = Modifier.padding(20.dp)) {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+    Column(modifier = Modifier.padding(20.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Row {
                 Icon(
                     painter = painterResource(id = R.drawable.icons8_fridge_96),
@@ -44,7 +47,10 @@ fun PantryScreen(viewModel: PantryViewModel) {
                 )
                 Column {
                     Text(text = "Pantry")
-                    Text(text = "Total items: ${uiState.pantryItemsList.size}", style = MaterialTheme.typography.bodySmall)
+                    Text(
+                        text = "Total items: ${uiState.pantryItemsList.size}",
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
             }
             Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = "")
@@ -52,9 +58,17 @@ fun PantryScreen(viewModel: PantryViewModel) {
         Divider()
         LazyColumn {
 
-            itemsIndexed(IngredientTypes.values()){
-                index, item ->
-                PantryType(ingredientTypes = item, viewModel.getFilteredPantryItemList(item))
+            itemsIndexed(IngredientTypes.values()) { index, item ->
+                PantryType(
+                    ingredientTypes = item,
+                    pantryItemsMap = viewModel.getFilteredPantryItemList(item),
+                    onItemClicked = viewModel::onItemButtonClicked,
+                    onEditIconClicked = viewModel::onEditItemButtonClicked,
+                    onDeleteIconClicked = viewModel::onDeleteItemButtonClicked,
+                    onInputProductNameValueChange = viewModel::onInputProductNameValueChange,
+                    onSliderValueChange = viewModel::onSliderValueChange,
+                    onUpdateIconClicked = viewModel::onUpdateIconClicked
+                )
             }
         }
     }
@@ -62,22 +76,52 @@ fun PantryScreen(viewModel: PantryViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PantryType (ingredientTypes: IngredientTypes, pantryItemsMap: Map<PantryItemUiState, Ingredient>) {
+fun PantryType(
+    ingredientTypes: IngredientTypes,
+    pantryItemsMap: Map<PantryItemUiState, Ingredient>,
+    onItemClicked: (PantryItemUiState) -> Unit,
+    onEditIconClicked: (PantryItemUiState) -> Unit,
+    onDeleteIconClicked: (PantryItemUiState) -> Unit,
+    onInputProductNameValueChange: (PantryItemUiState, String) -> Unit,
+    onSliderValueChange: (PantryItemUiState, Float) -> Unit,
+    onUpdateIconClicked: (PantryItemUiState) -> Unit
+) {
     var isExpanded by remember { mutableStateOf(true) }
-        Column {
-            Row (modifier = Modifier
+    Column {
+        Row(
+            modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 10.dp, bottom = 10.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                Text(text = ingredientTypes.name)
-                IconButton(onClick = { isExpanded = !isExpanded}) {
-                    if (isExpanded) Icon(painter = painterResource(id = R.drawable.ic_round_expand_more_24), contentDescription = "")
-                    else Icon(painter = painterResource(id = R.drawable.ic_round_expand_less_24), contentDescription = "")
-                }
+                .padding(start = 10.dp, top = 10.dp, bottom = 10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(painter = painterResource(id = ingredientTypes.iconId), contentDescription = "", tint = Color.Unspecified)
+            Text(text = ingredientTypes.name)
+            IconButton(onClick = { isExpanded = !isExpanded }) {
+                if (isExpanded) Icon(
+                    painter = painterResource(id = R.drawable.ic_round_expand_more_24),
+                    contentDescription = ""
+                )
+                else Icon(
+                    painter = painterResource(id = R.drawable.ic_round_expand_less_24),
+                    contentDescription = ""
+                )
             }
-            if (isExpanded) {PantryTypeCollapsed(pantryItemsMap)}
-            else {
-                PantryTypeExpanded(pantryItemsMap)}
-            Divider()
+        }
+        if (isExpanded) {
+            PantryTypeCollapsed(pantryItemsMap)
+        } else {
+            PantryTypeExpanded(
+                pantryItemsMap = pantryItemsMap,
+                onItemClicked = onItemClicked,
+                onEditIconClicked = onEditIconClicked,
+                onDeleteIconClicked = onDeleteIconClicked,
+                onInputProductNameValueChange = onInputProductNameValueChange,
+                onSliderValueChange = onSliderValueChange,
+                onUpdateIconClicked = onUpdateIconClicked
+            )
+        }
+        Divider()
     }
 }
 
@@ -93,18 +137,27 @@ private fun PantryTypeCollapsed(pantryItemsMap: Map<PantryItemUiState, Ingredien
 
 
 @Composable
-fun PantryTypeExpanded(pantryItemsMap: Map<PantryItemUiState, Ingredient>) {
+fun PantryTypeExpanded(
+    pantryItemsMap: Map<PantryItemUiState, Ingredient>,
+    onItemClicked: (PantryItemUiState) -> Unit,
+    onEditIconClicked: (PantryItemUiState) -> Unit,
+    onDeleteIconClicked: (PantryItemUiState) -> Unit,
+    onInputProductNameValueChange: (PantryItemUiState, String) -> Unit,
+    onSliderValueChange: (PantryItemUiState, Float) -> Unit,
+    onUpdateIconClicked: (PantryItemUiState) -> Unit
+) {
     Column {
         pantryItemsMap.forEach { (pantryItemUiState, ingredient) ->
             PantryItem(
                 item = pantryItemUiState,
                 ingredient = ingredient,
-                onItemClicked = { TODO() },
-                onAddIconClicked = { TODO() },
-                onEditIconClicked = { TODO() },
-                onDeleteIconClicked = { TODO() },
-                onInputProductNameValueChange = {it, on -> },
-                onSliderValueChange = {it, on -> }
+                onItemClicked = onItemClicked,
+                onAddIconClicked = { },
+                onEditIconClicked = onEditIconClicked,
+                onDeleteIconClicked = onDeleteIconClicked,
+                onInputProductNameValueChange = onInputProductNameValueChange,
+                onSliderValueChange = onSliderValueChange,
+                onUpdateIconClicked = onUpdateIconClicked
             )
         }
     }

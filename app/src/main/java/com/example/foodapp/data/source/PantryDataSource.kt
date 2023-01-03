@@ -11,4 +11,6 @@ interface PantryDataSource {
     suspend fun updatePantryItems(vararg items: Pantry)
 
     suspend fun deletePantryItems(vararg items: Pantry)
+
+    suspend fun deletePantryItem(item: Pantry)
 }

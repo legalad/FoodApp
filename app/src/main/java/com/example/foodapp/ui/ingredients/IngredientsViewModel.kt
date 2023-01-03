@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.foodapp.data.source.IngredientRepository
 import com.example.foodapp.data.utils.Mappers
 import com.example.foodapp.model.IngredientUiState
+import com.example.foodapp.model.PantryItemOperations
 import com.example.foodapp.model.PantryItemUiState
 import com.example.foodapp.ui.FoodAppViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class IngredientsViewModel @Inject constructor(
     private val ingredientRepository: IngredientRepository
-) : FoodAppViewModel() {
+) : FoodAppViewModel(), PantryItemOperations {
     private val _ingredientsUiState = MutableStateFlow(IngredientsUiState())
     val ingredientsUiState: StateFlow<IngredientsUiState> = _ingredientsUiState
 
@@ -68,13 +69,13 @@ class IngredientsViewModel @Inject constructor(
     //Adding generic ingredients logic
 
     fun onCheckedChange(ingredientUiState: IngredientUiState){
-        val temp = _ingredientsUiState.value.ingredientList.toMutableList()
-        val index = temp.indexOf(ingredientUiState)
-        temp[index] = temp[index].copy(selected = !temp[index].selected)
+        val tmp = _ingredientsUiState.value.ingredientList.toMutableList()
+        val index = tmp.indexOf(ingredientUiState)
+        tmp[index] = tmp[index].copy(selected = !tmp[index].selected)
         if (index != -1){
             _ingredientsUiState.update {
                 it.copy(
-                    ingredientList = temp,
+                    ingredientList = tmp,
                 )
             }
         }
@@ -98,7 +99,7 @@ class IngredientsViewModel @Inject constructor(
 
     //Item logic (operation on items)
 
-    fun onItemButtonClicked(item: PantryItemUiState){
+    override fun onItemButtonClicked(item: PantryItemUiState){
         val tmp = _ingredientsUiState.value.pantryItemList.toMutableList()
         val index = tmp.indexOf(item)
         tmp[index] = tmp[index].copy(isPantryCollapsed = !tmp[index].isPantryCollapsed)
@@ -109,7 +110,7 @@ class IngredientsViewModel @Inject constructor(
         }
     }
 
-    fun onAddItemButtonClicked(item: PantryItemUiState){
+    override fun onAddItemButtonClicked(item: PantryItemUiState){
         val tmp = _ingredientsUiState.value.pantryItemList.toMutableList()
         val index = tmp.indexOf(item) + 1
         tmp.add(index, item)
@@ -121,7 +122,7 @@ class IngredientsViewModel @Inject constructor(
 
     }
 
-    fun onEditItemButtonClicked(item: PantryItemUiState){
+    override fun onEditItemButtonClicked(item: PantryItemUiState){
         val tmp = _ingredientsUiState.value.pantryItemList.toMutableList()
         val index = tmp.indexOf(item)
         tmp[index] = tmp[index].copy(isPantryEdited = !tmp[index].isPantryEdited)
@@ -132,7 +133,7 @@ class IngredientsViewModel @Inject constructor(
         }
     }
 
-    fun onDeleteItemButtonClicked(item: PantryItemUiState){
+    override fun onDeleteItemButtonClicked(item: PantryItemUiState){
         val tmp = _ingredientsUiState.value.pantryItemList.toMutableList()
         val tmp2 = _ingredientsUiState.value.ingredientList.toMutableList()
         val index = tmp.indexOf(item)
@@ -147,7 +148,7 @@ class IngredientsViewModel @Inject constructor(
     }
 
 
-    fun onInputProductNameValueChange(item: PantryItemUiState, value: String){
+    override fun onInputProductNameValueChange(item: PantryItemUiState, value: String){
         val tmp = _ingredientsUiState.value.pantryItemList.toMutableList()
         val index = tmp.indexOf(item)
         tmp[index] = tmp[index].copy(inputProductName = value)
@@ -158,7 +159,7 @@ class IngredientsViewModel @Inject constructor(
         }
     }
 
-    fun onSliderValueChange(item: PantryItemUiState, value: Float){
+    override fun onSliderValueChange(item: PantryItemUiState, value: Float){
         val tmp = _ingredientsUiState.value.pantryItemList.toMutableList()
         val index = tmp.indexOf(item)
         tmp[index] = tmp[index].copy(sliderPosition = value)
@@ -169,6 +170,10 @@ class IngredientsViewModel @Inject constructor(
         }
     }
 
+    override fun onUpdateIconClicked(item: PantryItemUiState) {
+
+    }
+
     fun onBackedPressed() {
         _ingredientsUiState.update {
             it.copy(
@@ -176,8 +181,6 @@ class IngredientsViewModel @Inject constructor(
             )
         }
     }
-
-
 
     fun hideKeyboard() {
         _ingredientsUiState.update {

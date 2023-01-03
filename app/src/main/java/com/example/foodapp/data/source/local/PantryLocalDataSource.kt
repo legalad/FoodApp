@@ -24,8 +24,12 @@ class PantryLocalDataSource internal constructor(
         pantryDao.updatePantryItems(*items)
     }
 
-    override suspend fun deletePantryItems(vararg items: Pantry) {
+    override suspend fun deletePantryItems(vararg items: Pantry) = withContext(ioDispatcher) {
         pantryDao.deletePantryItems(*items)
+    }
+
+    override suspend fun deletePantryItem(item: Pantry) = withContext(ioDispatcher) {
+        pantryDao.deletePantryItem(item)
     }
 
 

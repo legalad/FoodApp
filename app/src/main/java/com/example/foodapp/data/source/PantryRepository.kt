@@ -13,4 +13,6 @@ interface PantryRepository {
 
     suspend fun deletePantryItems(vararg items: Pantry)
 
+    suspend fun deletePantryItem(item: Pantry)
+
 }

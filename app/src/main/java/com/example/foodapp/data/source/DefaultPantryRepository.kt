@@ -25,4 +25,8 @@ class DefaultPantryRepository (
     override suspend fun deletePantryItems(vararg items: Pantry) {
         pantryLocalDataSource.deletePantryItems(*items)
     }
+
+    override suspend fun deletePantryItem(item: Pantry) {
+        pantryLocalDataSource.deletePantryItem(item)
+    }
 }
