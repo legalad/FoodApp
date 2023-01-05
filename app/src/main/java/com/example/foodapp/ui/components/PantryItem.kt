@@ -89,7 +89,7 @@ fun CollapsedPantryItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = item.pantry.name,
+            text = item.pantry.item_name,
             style = MaterialTheme.typography.titleMedium
         )
         Row(modifier = Modifier) {
@@ -137,7 +137,7 @@ fun ExpandedPantryItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = ingredient.name, style = MaterialTheme.typography.labelLarge)
+            Text(text = ingredient.ingredient_name, style = MaterialTheme.typography.labelLarge)
             Row(modifier = Modifier) {
                 IconButton(onClick = { onAddIconClicked(item) }) {
                     Icon(
@@ -165,7 +165,7 @@ fun ExpandedPantryItem(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
-                Text(text = item.pantry.name, style = MaterialTheme.typography.titleMedium)
+                Text(text = item.pantry.item_name, style = MaterialTheme.typography.titleMedium)
                 Text(
                     text = item.pantry.quantity.toString() + " " + item.pantry.unit,
                     style = MaterialTheme.typography.labelSmall

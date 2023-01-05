@@ -32,7 +32,7 @@ class IngredientsViewModel @Inject constructor(
     fun getFilteredIngredientsList(): List<IngredientUiState> {
         return if (_ingredientsUiState.value.input.length >=3)
             _ingredientsUiState.value.ingredientList.filter {
-                it.ingredient.name.uppercase().contains(_ingredientsUiState.value.input.uppercase().trim())
+                it.ingredient.ingredient_name.uppercase().contains(_ingredientsUiState.value.input.uppercase().trim())
             }
         else filterIngredientList (_ingredientsUiState.value.selectedType.filter) //ingredientsUiState.value.ingredientList.filter { it.group == "Fruits" }
     }
@@ -139,7 +139,7 @@ class IngredientsViewModel @Inject constructor(
         val index = tmp.indexOf(item)
         val ingredientId = tmp[index].pantry.ingredient_id
         tmp.remove(item)
-        tmp2.find { it.ingredient.id == ingredientId }?.let { onCheckedChange(it) }
+        tmp2.find { it.ingredient.ingredient_id == ingredientId }?.let { onCheckedChange(it) }
         _ingredientsUiState.update {
             it.copy(
                 pantryItemList = tmp

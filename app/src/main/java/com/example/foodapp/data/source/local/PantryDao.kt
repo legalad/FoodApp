@@ -12,7 +12,8 @@ import com.example.foodapp.data.Pantry
 @Dao
 interface PantryDao {
     @Query("SELECT * FROM INGREDIENT_TABLE " +
-    "JOIN PANTRY_TABLE ON pantry_table.ingredient_id = ingredient_table.id")
+            "JOIN PANTRY_TABLE ON pantry_table.ingredient_id = ingredient_table.ingredient_id"
+    )
     suspend fun getPantryItems(): Map<Pantry, Ingredient>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

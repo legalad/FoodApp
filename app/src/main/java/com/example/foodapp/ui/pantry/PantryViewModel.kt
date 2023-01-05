@@ -83,7 +83,7 @@ class PantryViewModel @Inject constructor(
     override fun onUpdateIconClicked(item: PantryItemUiState) {
 
         val tmpMap = getPantryItemMap()
-        val tmpItem = item.copy(isPantryEdited = false, isPantryCollapsed = false ,pantry = item.pantry.copy(name = item.inputProductName, unit = item.selectedOptionText, quantity = item.sliderPosition))
+        val tmpItem = item.copy(isPantryEdited = false, isPantryCollapsed = false ,pantry = item.pantry.copy(item_name = item.inputProductName, unit = item.selectedOptionText, quantity = item.sliderPosition))
         viewModelScope.launch {
             pantryRepository.updatePantryItems(tmpItem.pantry)
         }
@@ -103,7 +103,7 @@ class PantryViewModel @Inject constructor(
             tmpMap[tmpItem] = it
             tmpMap.remove(item)
             val sortedMap: MutableMap<PantryItemUiState, Ingredient> = LinkedHashMap()
-            tmpMap.entries.sortedBy { it.key.pantry.name }.forEach { sortedMap[it.key] = it.value }
+            tmpMap.entries.sortedBy { it.key.pantry.item_name }.forEach { sortedMap[it.key] = it.value }
             updatePantryItemMap(sortedMap)
         }
     }

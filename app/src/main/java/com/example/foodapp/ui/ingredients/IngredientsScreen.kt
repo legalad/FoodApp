@@ -106,7 +106,7 @@ fun IngredientItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = ingredientUiState.ingredient.name,
+            text = ingredientUiState.ingredient.ingredient_name,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(8f)

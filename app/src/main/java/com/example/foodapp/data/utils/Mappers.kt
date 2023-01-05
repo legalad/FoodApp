@@ -20,19 +20,19 @@ class Mappers {
         fun fromIngredientToPantry(ingredient: Ingredient): Pantry {
             return Pantry(
                 0,
-                "Default " + ingredient.name,
+                "Default " + ingredient.ingredient_name,
                 place_date = Calendar.getInstance().time,
                 expire_date = Calendar.getInstance().time,
                 quantity = 0.5f,
                 unit = "KG",
-                ingredient_id = ingredient.id
+                ingredient_id = ingredient.ingredient_id
             )
         }
 
         fun fromPantryItemToPantryItemUiState(pantryItem: Pantry): PantryItemUiState {
             return PantryItemUiState(
                 pantry = pantryItem,
-                inputProductName = pantryItem.name,
+                inputProductName = pantryItem.item_name,
                 selectedOptionText = pantryItem.unit,
                 sliderPosition = pantryItem.quantity
                 )

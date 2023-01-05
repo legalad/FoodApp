@@ -97,7 +97,7 @@ object DatabaseModule {
             context.applicationContext,
             FoodAppDatabase::class.java,
             "food_app.db"
-        ).createFromAsset("database/food_app.db").build()
+        ).createFromAsset("database/food_app_db.db").build()
     }
 
 }

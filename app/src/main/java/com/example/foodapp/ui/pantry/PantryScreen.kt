@@ -130,8 +130,14 @@ fun PantryType(
 private fun PantryTypeCollapsed(pantryItemsMap: Map<PantryItemUiState, Ingredient>) {
     Row(verticalAlignment = Alignment.Bottom, modifier = Modifier.horizontalScroll(rememberScrollState())) {
 
+        //move to model later
+        val tmp: MutableMap<Ingredient, Int> = mutableMapOf()
         pantryItemsMap.forEach { (pantryItemUiState, ingredient) ->
-            ElevatedChipPantryItem(ingredient)  }
+            tmp[ingredient] = (tmp[ingredient] ?: 0) + 1
+        }
+        tmp.forEach { (ingredient, amount) ->
+            ElevatedChipPantryItem(ingredient = ingredient, amount = amount)
+        }
     }
 }
 
@@ -199,7 +205,7 @@ fun PantryItemPrev() {
 @Preview (showBackground = true)
 @Composable
 fun ElevatedChipPantryItemPrev() {
-    ElevatedChipPantryItem(Ingredient(0, "aaa", "aaa", "aaa", "aaa"))
+    ElevatedChipPantryItem(Ingredient(1, "aaa", "aa", "aa", "aa"), 1)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -234,11 +240,11 @@ fun ElevatedCardPantryItem() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ElevatedChipPantryItem(ingredient: Ingredient) {
+fun ElevatedChipPantryItem(ingredient: Ingredient, amount: Int) {
     BadgedBox(
         badge = {
             Badge (modifier = Modifier.padding(0.dp)) {
-                val badgeNumber = "8"
+                val badgeNumber = amount.toString()
                 Text(
                     badgeNumber,
                     modifier = Modifier.semantics {
@@ -249,6 +255,6 @@ fun ElevatedChipPantryItem(ingredient: Ingredient) {
         }, modifier = Modifier
             .padding(top = 15.dp, end = 15.dp)
     ) {
-        ElevatedAssistChip(onClick = { /*TODO*/ }, { Text(text = ingredient.name)})
+        ElevatedAssistChip(onClick = { /*TODO*/ }, { Text(text = ingredient.ingredient_name)})
     }
 }

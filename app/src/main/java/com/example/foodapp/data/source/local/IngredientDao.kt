@@ -15,6 +15,6 @@ interface IngredientDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addPantryItemList(pantryList: List<Pantry>)
 
-    @Query("SELECT * FROM INGREDIENT_TABLE ORDER BY id ASC")
+    @Query("SELECT * FROM INGREDIENT_TABLE ORDER BY ingredient_id ASC")
     suspend fun getIngredients(): List<Ingredient>
 }

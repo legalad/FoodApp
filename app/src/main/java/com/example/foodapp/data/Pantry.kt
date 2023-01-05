@@ -7,12 +7,12 @@ import java.util.Date
 
 @Entity(
     tableName = "pantry_table",
-    foreignKeys = [ForeignKey(entity = Ingredient::class, parentColumns = ["id"], childColumns = ["ingredient_id"], onDelete = ForeignKey.NO_ACTION)]
+    foreignKeys = [ForeignKey(entity = Ingredient::class, parentColumns = ["ingredient_id"], childColumns = ["ingredient_id"], onDelete = ForeignKey.NO_ACTION)]
 )
 data class Pantry (
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
-    val name: String,
+    val item_id: Int,
+    val item_name: String,
     val bar_code: String? = null,
     val place_date: Date,
     val expire_date: Date,
