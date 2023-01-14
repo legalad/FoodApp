@@ -1,9 +1,8 @@
 package com.example.foodapp.ui.pantry
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.foodapp.data.Ingredient
+import com.example.foodapp.data.IngredientEntity
 import com.example.foodapp.data.source.PantryRepository
 import com.example.foodapp.data.utils.Mappers
 import com.example.foodapp.model.PantryItemOperations
@@ -25,11 +24,10 @@ class PantryViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val pantryItemsMapWithState: MutableMap<PantryItemUiState, Ingredient> = mutableMapOf()
+            val pantryItemsMapWithState: MutableMap<PantryItemUiState, IngredientEntity> = mutableMapOf()
             pantryRepository.getPantryItems().forEach {
                     (pantry, ingredient) -> pantryItemsMapWithState[Mappers.fromPantryItemToPantryItemUiState(pantry)] =
                 ingredient }
-            Log.d("SPRAWDZAM", pantryRepository.getPantryItems().values.toString())
              _pantryUiState.update {
                 it.copy(
                     pantryItemsList = pantryItemsMapWithState
@@ -38,11 +36,11 @@ class PantryViewModel @Inject constructor(
         }
     }
 
-    fun getFilteredPantryItemList(type: IngredientTypes): Map<PantryItemUiState, Ingredient> {
+    fun getFilteredPantryItemList(type: IngredientTypes): Map<PantryItemUiState, IngredientEntity> {
         return filterIngredientList (type.filterPantry)
     }
 
-    private fun filterIngredientList(f: (Map<PantryItemUiState, Ingredient>) -> Map<PantryItemUiState, Ingredient>): Map<PantryItemUiState, Ingredient>{
+    private fun filterIngredientList(f: (Map<PantryItemUiState, IngredientEntity>) -> Map<PantryItemUiState, IngredientEntity>): Map<PantryItemUiState, IngredientEntity>{
         return f(_pantryUiState.value.pantryItemsList)
     }
 
@@ -64,7 +62,7 @@ class PantryViewModel @Inject constructor(
 
     override fun onDeleteItemButtonClicked(item: PantryItemUiState) {
         viewModelScope.launch {
-            pantryRepository.deletePantryItem(item.pantry)
+            pantryRepository.deletePantryItem(item.pantryEntity)
         }
     }
 
@@ -83,32 +81,32 @@ class PantryViewModel @Inject constructor(
     override fun onUpdateIconClicked(item: PantryItemUiState) {
 
         val tmpMap = getPantryItemMap()
-        val tmpItem = item.copy(isPantryEdited = false, isPantryCollapsed = false ,pantry = item.pantry.copy(item_name = item.inputProductName, unit = item.selectedOptionText, quantity = item.sliderPosition))
+        val tmpItem = item.copy(isPantryEdited = false, isPantryCollapsed = false ,pantryEntity = item.pantryEntity.copy(item_name = item.inputProductName, unit = item.selectedOptionText, quantity = item.sliderPosition))
         viewModelScope.launch {
-            pantryRepository.updatePantryItems(tmpItem.pantry)
+            pantryRepository.updatePantryItems(tmpItem.pantryEntity)
         }
         updatePantryItemState(tmpMap, item, tmpItem)
     }
 
-    private fun getPantryItemMap(): MutableMap<PantryItemUiState, Ingredient> {
+    private fun getPantryItemMap(): MutableMap<PantryItemUiState, IngredientEntity> {
         return _pantryUiState.value.pantryItemsList.toMutableMap()
     }
 
     private fun updatePantryItemState(
-        tmpMap: MutableMap<PantryItemUiState, Ingredient>,
+        tmpMap: MutableMap<PantryItemUiState, IngredientEntity>,
         item: PantryItemUiState,
         tmpItem: PantryItemUiState
     ) {
         tmpMap[item]?.let { it ->
             tmpMap[tmpItem] = it
             tmpMap.remove(item)
-            val sortedMap: MutableMap<PantryItemUiState, Ingredient> = LinkedHashMap()
-            tmpMap.entries.sortedBy { it.key.pantry.item_name }.forEach { sortedMap[it.key] = it.value }
+            val sortedMap: MutableMap<PantryItemUiState, IngredientEntity> = LinkedHashMap()
+            tmpMap.entries.sortedBy { it.key.pantryEntity.item_name }.forEach { sortedMap[it.key] = it.value }
             updatePantryItemMap(sortedMap)
         }
     }
 
-    private fun updatePantryItemMap(value: Map<PantryItemUiState, Ingredient>){
+    private fun updatePantryItemMap(value: Map<PantryItemUiState, IngredientEntity>){
         _pantryUiState.update {
             it.copy(
                 pantryItemsList = value

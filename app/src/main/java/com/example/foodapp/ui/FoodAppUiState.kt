@@ -1,8 +1,8 @@
 package com.example.foodapp.ui
 
 import androidx.compose.runtime.mutableStateListOf
-import com.example.foodapp.data.Ingredient
+import com.example.foodapp.data.IngredientEntity
 
 data class FoodAppUiState (
-    val ingredientList: List<Ingredient> = mutableStateListOf()
+    val ingredientEntityList: List<IngredientEntity> = mutableStateListOf()
 )

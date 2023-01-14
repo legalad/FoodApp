@@ -1,6 +1,6 @@
 package com.example.foodapp.model
 
-import com.example.foodapp.data.Pantry
+import com.example.foodapp.data.PantryEntity
 
 data class PantryItemUiState (
     private val options: Array<Units> = Units.values(),
@@ -10,5 +10,5 @@ data class PantryItemUiState (
     val isMenuExpanded: Boolean = false,
     val isPantryCollapsed: Boolean = true,
     val isPantryEdited: Boolean = false,
-    val pantry: Pantry
+    val pantryEntity: PantryEntity
         )

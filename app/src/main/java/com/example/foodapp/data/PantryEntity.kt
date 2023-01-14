@@ -7,9 +7,9 @@ import java.util.Date
 
 @Entity(
     tableName = "pantry_table",
-    foreignKeys = [ForeignKey(entity = Ingredient::class, parentColumns = ["ingredient_id"], childColumns = ["ingredient_id"], onDelete = ForeignKey.NO_ACTION)]
+    foreignKeys = [ForeignKey(entity = IngredientEntity::class, parentColumns = ["ingredient_id"], childColumns = ["ingredient_id"], onDelete = ForeignKey.NO_ACTION)]
 )
-data class Pantry (
+data class PantryEntity (
     @PrimaryKey(autoGenerate = true)
     val item_id: Int,
     val item_name: String,

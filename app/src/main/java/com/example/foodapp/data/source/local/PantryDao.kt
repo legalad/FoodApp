@@ -6,25 +6,25 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.example.foodapp.data.Ingredient
-import com.example.foodapp.data.Pantry
+import com.example.foodapp.data.IngredientEntity
+import com.example.foodapp.data.PantryEntity
 
 @Dao
 interface PantryDao {
     @Query("SELECT * FROM INGREDIENT_TABLE " +
             "JOIN PANTRY_TABLE ON pantry_table.ingredient_id = ingredient_table.ingredient_id"
     )
-    suspend fun getPantryItems(): Map<Pantry, Ingredient>
+    suspend fun getPantryItems(): Map<PantryEntity, IngredientEntity>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun addPantryItems(vararg items: Pantry)
+    suspend fun addPantryItems(vararg items: PantryEntity)
 
     @Update
-    suspend fun updatePantryItems(vararg items: Pantry)
+    suspend fun updatePantryItems(vararg items: PantryEntity)
 
     @Delete
-    suspend fun deletePantryItems(vararg items: Pantry)
+    suspend fun deletePantryItems(vararg items: PantryEntity)
 
-    @Delete(entity = Pantry::class)
-    suspend fun deletePantryItem(item: Pantry)
+    @Delete(entity = PantryEntity::class)
+    suspend fun deletePantryItem(item: PantryEntity)
 }

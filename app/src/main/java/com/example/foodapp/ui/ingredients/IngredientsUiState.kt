@@ -4,6 +4,12 @@ import androidx.compose.runtime.mutableStateListOf
 import com.example.foodapp.model.IngredientUiState
 import com.example.foodapp.model.PantryItemUiState
 
+/*sealed interface IngredientsScreenUiState {
+    data class Success(val s: String) : IngredientsScreenUiState
+    data class Loading(val s: String) : IngredientsScreenUiState
+    data class Error(val s: String) : IngredientsScreenUiState
+}*/
+
 data class IngredientsUiState (
     val ingredientList: List<IngredientUiState> = mutableStateListOf<IngredientUiState>(),
     val pantryItemList: List<PantryItemUiState> = mutableStateListOf<PantryItemUiState>(),

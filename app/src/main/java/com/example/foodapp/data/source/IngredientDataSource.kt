@@ -1,14 +1,14 @@
 package com.example.foodapp.data.source
 
-import com.example.foodapp.data.Ingredient
-import com.example.foodapp.data.Pantry
+import com.example.foodapp.data.IngredientEntity
+import com.example.foodapp.data.PantryEntity
 
 interface IngredientDataSource {
 
-    suspend fun getIngredients(): List<Ingredient>
+    suspend fun getIngredients(): List<IngredientEntity>
 
-    suspend fun addIngredientToPantry(pantry: Pantry)
+    suspend fun addIngredientToPantry(pantryEntity: PantryEntity)
 
-    suspend fun addPantryItemList(pantryList: List<Pantry>)
+    suspend fun addPantryItemList(pantryEntityList: List<PantryEntity>)
 
 }

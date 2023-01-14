@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.foodapp.R
-import com.example.foodapp.data.Ingredient
+import com.example.foodapp.data.IngredientEntity
 import com.example.foodapp.model.IngredientUiState
 import com.example.foodapp.model.PantryItemUiState
 import com.example.foodapp.ui.components.PantryItem
@@ -30,46 +30,46 @@ import com.example.foodapp.ui.components.SearchTextField
 enum class IngredientTypes(
     @DrawableRes val iconId: Int,
     val filter: (List<IngredientUiState>) -> List<IngredientUiState>,
-    val filterPantry: (Map<PantryItemUiState, Ingredient>) -> Map<PantryItemUiState, Ingredient>
+    val filterPantry: (Map<PantryItemUiState, IngredientEntity>) -> Map<PantryItemUiState, IngredientEntity>
 ) {
     VEGETABLES(
         R.drawable.icons8_group_of_vegetables_50,
-        { it -> it.filter { it.ingredient.group == "Vegetables" }},
+        { it -> it.filter { it.ingredientEntity.group == "Vegetables" }},
         { it -> it.filter { it.value.group == "Vegetables" }}),
     FRUITS(
         R.drawable.icons8_group_of_fruits_50,
-        { it -> it.filter { it.ingredient.group == "Fruits" } },
+        { it -> it.filter { it.ingredientEntity.group == "Fruits" } },
         { it -> it.filter { it.value.group == "Fruits" }}),
     MEATS(
         R.drawable.icons8_steak_50,
-        { it -> it.filter { it.ingredient.group == "Animal foods" } },
+        { it -> it.filter { it.ingredientEntity.group == "Animal foods" } },
         { it -> it.filter { it.value.group == "Animal foods" }}),
     DAIRY(
         R.drawable.icons8_milk_bottle_50,
-        { it -> it.filter { it.ingredient.group == "Milk and milk products" } },
+        { it -> it.filter { it.ingredientEntity.group == "Milk and milk products" } },
         { it -> it.filter { it.value.group == "Milk and milk products" }}),
     GRAIN(
         R.drawable.icons8_soy_50,
-        { it -> it.filter { it.ingredient.group == "Cereals and cereal products" } },
+        { it -> it.filter { it.ingredientEntity.group == "Cereals and cereal products" } },
         { it -> it.filter { it.value.group == "Cereals and cereal products" }}),
     FISHES(
         R.drawable.icons8_fish_food_50,
-        { it -> it.filter { it.ingredient.subGroup == "Fishes" } },
+        { it -> it.filter { it.ingredientEntity.subGroup == "Fishes" } },
         { it -> it.filter { it.value.group == "Fishes" }}),
     SEAFOOD(
         R.drawable.icons8_prawn_50,
-        { it -> it.filter { it.ingredient.group == "Aquatic foods" && it.ingredient.subGroup != "Fishes" } },
+        { it -> it.filter { it.ingredientEntity.group == "Aquatic foods" && it.ingredientEntity.subGroup != "Fishes" } },
         { it -> it.filter { it.value.group == "Aquatic foods" && it.value.subGroup != "Fishes" }}),
     SPICES(
         R.drawable.icons8_black_pepper_50,
-        { it -> it.filter { it.ingredient.group == "Herbs and Spices" } },
+        { it -> it.filter { it.ingredientEntity.group == "Herbs and Spices" } },
         { it -> it.filter { it.value.group == "Herbs and Spices" }}),
     DRINKS(R.drawable.icons8_cola_50,
-        { it -> it.filter { it.ingredient.group == "Beverages" } },
+        { it -> it.filter { it.ingredientEntity.group == "Beverages" } },
         { it -> it.filter { it.value.group == "Beverages" }}),
     CANDIES(
         R.drawable.icons8_dessert_50,
-        { it -> it.filter { it.ingredient.group == "Confectioneries" } },
+        { it -> it.filter { it.ingredientEntity.group == "Confectioneries" } },
         { it -> it.filter { it.value.group == "Confectioneries" }})
 
 }
@@ -106,7 +106,7 @@ fun IngredientItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = ingredientUiState.ingredient.ingredient_name,
+            text = ingredientUiState.ingredientEntity.ingredient_name,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(8f)
@@ -225,7 +225,7 @@ fun AddPantryItemsScreen(
                 Card(modifier = Modifier.padding(5.dp)) {
                     PantryItem(
                         item = item,
-                        ingredient = Ingredient(0, "Apple", "Ap", "Ap", "Ap"),
+                        ingredientEntity = IngredientEntity(0, "Apple", "Ap", "Ap", "Ap"),
                         onItemClicked = onItemClicked,
                         onAddIconClicked = onAddIconClicked,
                         onEditIconClicked = onEditIconClicked,
