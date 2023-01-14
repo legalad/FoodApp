@@ -17,13 +17,10 @@ interface PantryDao {
     suspend fun getPantryItems(): Map<PantryEntity, IngredientEntity>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun addPantryItems(vararg items: PantryEntity)
+    suspend fun addPantryItem(item: PantryEntity)
 
     @Update
-    suspend fun updatePantryItems(vararg items: PantryEntity)
-
-    @Delete
-    suspend fun deletePantryItems(vararg items: PantryEntity)
+    suspend fun updatePantryItem(item: PantryEntity)
 
     @Delete(entity = PantryEntity::class)
     suspend fun deletePantryItem(item: PantryEntity)

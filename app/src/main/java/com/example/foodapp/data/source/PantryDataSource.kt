@@ -1,16 +1,13 @@
 package com.example.foodapp.data.source
 
-import com.example.foodapp.data.IngredientEntity
-import com.example.foodapp.data.PantryEntity
+import com.example.foodapp.model.PantryItem
 
 interface PantryDataSource {
-    suspend fun getPantryItems(): Map<PantryEntity, IngredientEntity>
+    suspend fun getPantryItems(): List<PantryItem>
 
-    suspend fun addPantryItems(vararg items: PantryEntity)
+    suspend fun addPantryItem(item: PantryItem)
 
-    suspend fun updatePantryItems(vararg items: PantryEntity)
+    suspend fun updatePantryItem(item: PantryItem)
 
-    suspend fun deletePantryItems(vararg items: PantryEntity)
-
-    suspend fun deletePantryItem(item: PantryEntity)
+    suspend fun deletePantryItem(item: PantryItem)
 }

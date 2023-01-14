@@ -1,8 +1,9 @@
 package com.example.foodapp.data.source.local
 
-import com.example.foodapp.data.IngredientEntity
-import com.example.foodapp.data.PantryEntity
 import com.example.foodapp.data.source.PantryDataSource
+import com.example.foodapp.data.utils.toPantryEntity
+import com.example.foodapp.data.utils.toPantryItemList
+import com.example.foodapp.model.PantryItem
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -12,24 +13,21 @@ class PantryLocalDataSource internal constructor(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ): PantryDataSource{
 
-    override suspend fun getPantryItems(): Map<PantryEntity, IngredientEntity> = withContext(ioDispatcher) {
-        pantryDao.getPantryItems()
+    override suspend fun getPantryItems(): List<PantryItem> = withContext(ioDispatcher) {
+        pantryDao.getPantryItems().toPantryItemList()
     }
 
-    override suspend fun addPantryItems(vararg items: PantryEntity) {
-        pantryDao.addPantryItems(*items)
+    override suspend fun addPantryItem(item: PantryItem) {
+        pantryDao.addPantryItem(item.toPantryEntity())
     }
 
-    override suspend fun updatePantryItems(vararg items: PantryEntity) {
-        pantryDao.updatePantryItems(*items)
+    override suspend fun updatePantryItem(item: PantryItem) {
+        pantryDao.updatePantryItem(item.toPantryEntity())
     }
 
-    override suspend fun deletePantryItems(vararg items: PantryEntity) = withContext(ioDispatcher) {
-        pantryDao.deletePantryItems(*items)
-    }
 
-    override suspend fun deletePantryItem(item: PantryEntity) = withContext(ioDispatcher) {
-        pantryDao.deletePantryItem(item)
+    override suspend fun deletePantryItem(item: PantryItem) = withContext(ioDispatcher) {
+        pantryDao.deletePantryItem(item.toPantryEntity())
     }
 
 

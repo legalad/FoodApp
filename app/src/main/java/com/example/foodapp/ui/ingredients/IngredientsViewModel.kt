@@ -2,7 +2,7 @@ package com.example.foodapp.ui.ingredients
 
 import androidx.lifecycle.viewModelScope
 import com.example.foodapp.data.source.IngredientRepository
-import com.example.foodapp.data.utils.Mappers
+import com.example.foodapp.data.utils.*
 import com.example.foodapp.model.IngredientUiState
 import com.example.foodapp.model.PantryItemOperations
 import com.example.foodapp.model.PantryItemUiState
@@ -24,7 +24,7 @@ class IngredientsViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _ingredientsUiState.update { it ->
-                it.copy(ingredientList = ingredientRepository.getIngredients().map { Mappers.fromIngredientToIngredientUiState(it) })
+                it.copy(ingredientList = ingredientRepository.getIngredients().toIngredientUiStateList())
             }
         }
 
@@ -41,7 +41,7 @@ class IngredientsViewModel @Inject constructor(
     fun getFilteredIngredientsList(): List<IngredientUiState> {
         return if (_ingredientsUiState.value.input.length >=3)
             _ingredientsUiState.value.ingredientList.filter {
-                it.ingredientEntity.ingredient_name.uppercase().contains(_ingredientsUiState.value.input.uppercase().trim())
+                it.ingredient.ingredient_name.uppercase().contains(_ingredientsUiState.value.input.uppercase().trim())
             }
         else filterIngredientList (_ingredientsUiState.value.selectedType.filter) //ingredientsUiState.value.ingredientList.filter { it.group == "Fruits" }
     }
@@ -91,7 +91,7 @@ class IngredientsViewModel @Inject constructor(
     }
 
     fun onAddFabClicked(){
-        val tmp = _ingredientsUiState.value.ingredientList.filter { it.selected }.map { Mappers.fromPantryItemToPantryItemUiState(Mappers.fromIngredientToPantry(it.ingredientEntity)) }
+        val tmp = _ingredientsUiState.value.ingredientList.filter { it.selected }.map { (it.ingredient.toPantryItem().toPantryItemUiState()) }
         _ingredientsUiState.update {
             it.copy(addingScreen = true, pantryItemList = tmp)
         }
@@ -99,7 +99,7 @@ class IngredientsViewModel @Inject constructor(
 
     fun onAddToPantryFabClicked(){
         viewModelScope.launch {
-            ingredientRepository.addPantryItemList(_ingredientsUiState.value.pantryItemList.map { it.pantryEntity })
+            ingredientRepository.addPantryItemList(_ingredientsUiState.value.pantryItemList.toPantryItemList())
         }
         _ingredientsUiState.update {
             it.copy(addingScreen = false)
@@ -146,9 +146,9 @@ class IngredientsViewModel @Inject constructor(
         val tmp = _ingredientsUiState.value.pantryItemList.toMutableList()
         val tmp2 = _ingredientsUiState.value.ingredientList.toMutableList()
         val index = tmp.indexOf(item)
-        val ingredientId = tmp[index].pantryEntity.ingredient_id
+        val ingredientId = tmp[index].pantryItem.id
         tmp.remove(item)
-        tmp2.find { it.ingredientEntity.ingredient_id == ingredientId }?.let { onCheckedChange(it) }
+        tmp2.find { it.ingredient.ingredient_id == ingredientId }?.let { onCheckedChange(it) }
         _ingredientsUiState.update {
             it.copy(
                 pantryItemList = tmp

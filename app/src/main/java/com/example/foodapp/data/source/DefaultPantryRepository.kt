@@ -1,7 +1,6 @@
 package com.example.foodapp.data.source
 
-import com.example.foodapp.data.IngredientEntity
-import com.example.foodapp.data.PantryEntity
+import com.example.foodapp.model.PantryItem
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -10,23 +9,20 @@ class DefaultPantryRepository (
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
         ): PantryRepository {
 
-    override suspend fun getPantryItems(): Map<PantryEntity, IngredientEntity> {
+    override suspend fun getPantryItems(): List<PantryItem> {
         return pantryLocalDataSource.getPantryItems()
     }
 
-    override suspend fun addPantryItems(vararg items: PantryEntity) {
-        pantryLocalDataSource.addPantryItems(*items)
+    override suspend fun addPantryItem(item: PantryItem) {
+        pantryLocalDataSource.addPantryItem(item)
     }
 
-    override suspend fun updatePantryItems(vararg items: PantryEntity) {
-        pantryLocalDataSource.updatePantryItems(*items)
+    override suspend fun updatePantryItem(item: PantryItem) {
+        pantryLocalDataSource.updatePantryItem(item)
     }
 
-    override suspend fun deletePantryItems(vararg items: PantryEntity) {
-        pantryLocalDataSource.deletePantryItems(*items)
-    }
 
-    override suspend fun deletePantryItem(item: PantryEntity) {
+    override suspend fun deletePantryItem(item: PantryItem) {
         pantryLocalDataSource.deletePantryItem(item)
     }
 }

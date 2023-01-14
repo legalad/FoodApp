@@ -1,8 +1,11 @@
 package com.example.foodapp.data.source.local
 
-import com.example.foodapp.data.IngredientEntity
-import com.example.foodapp.data.PantryEntity
 import com.example.foodapp.data.source.IngredientDataSource
+import com.example.foodapp.data.utils.toIngredientList
+import com.example.foodapp.data.utils.toPantryEntity
+import com.example.foodapp.data.utils.toPantryEntityList
+import com.example.foodapp.model.Ingredient
+import com.example.foodapp.model.PantryItem
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -12,15 +15,15 @@ class IngredientLocalDataSource internal constructor(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : IngredientDataSource {
 
-    override suspend fun getIngredients(): List<IngredientEntity> = withContext(ioDispatcher) {
-        ingredientDao.getIngredients()
+    override suspend fun getIngredients(): List<Ingredient> = withContext(ioDispatcher) {
+        ingredientDao.getIngredients().toIngredientList()
     }
 
-    override suspend fun addIngredientToPantry(pantryEntity: PantryEntity) = withContext(ioDispatcher) {
-        ingredientDao.addPantryItem(pantryEntity)
+    override suspend fun addIngredientToPantry(pantryItem: PantryItem) = withContext(ioDispatcher) {
+        ingredientDao.addPantryItem(pantryItem.toPantryEntity())
     }
 
-    override suspend fun addPantryItemList(pantryEntityList: List<PantryEntity>) = withContext(ioDispatcher) {
-        ingredientDao.addPantryItemList(pantryEntityList)
+    override suspend fun addPantryItemList(pantryItemList: List<PantryItem>) = withContext(ioDispatcher) {
+        ingredientDao.addPantryItemList(pantryItemList.toPantryEntityList())
     }
 }

@@ -8,7 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.foodapp.ui.screens.BrowseRecipesScreen
-import com.example.foodapp.ui.screens.PantryScreen
+import com.example.foodapp.ui.pantry.PantryScreen
 import com.example.foodapp.ui.screens.ScheduleScreen
 import com.example.foodapp.ui.ingredients.IngredientsScreen
 import com.example.foodapp.ui.ingredients.IngredientsViewModel

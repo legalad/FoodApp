@@ -1,4 +1,4 @@
-package com.example.foodapp.ui.screens
+package com.example.foodapp.ui.pantry
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -20,11 +20,10 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.foodapp.R
-import com.example.foodapp.data.IngredientEntity
+import com.example.foodapp.model.Ingredient
 import com.example.foodapp.model.PantryItemUiState
 import com.example.foodapp.ui.components.PantryItem
 import com.example.foodapp.ui.ingredients.IngredientTypes
-import com.example.foodapp.ui.pantry.PantryViewModel
 
 
 @Composable
@@ -61,7 +60,7 @@ fun PantryScreen(viewModel: PantryViewModel) {
             itemsIndexed(IngredientTypes.values()) { index, item ->
                 PantryType(
                     ingredientTypes = item,
-                    pantryItemsMap = viewModel.getFilteredPantryItemList(item),
+                    pantryItemsList = viewModel.getFilteredPantryItemList(item),
                     onItemClicked = viewModel::onItemButtonClicked,
                     onEditIconClicked = viewModel::onEditItemButtonClicked,
                     onDeleteIconClicked = viewModel::onDeleteItemButtonClicked,
@@ -78,7 +77,7 @@ fun PantryScreen(viewModel: PantryViewModel) {
 @Composable
 fun PantryType(
     ingredientTypes: IngredientTypes,
-    pantryItemsMap: Map<PantryItemUiState, IngredientEntity>,
+    pantryItemsList: List<PantryItemUiState>,
     onItemClicked: (PantryItemUiState) -> Unit,
     onEditIconClicked: (PantryItemUiState) -> Unit,
     onDeleteIconClicked: (PantryItemUiState) -> Unit,
@@ -109,10 +108,10 @@ fun PantryType(
             }
         }
         if (isExpanded) {
-            PantryTypeCollapsed(pantryItemsMap)
+            PantryTypeCollapsed(pantryItemsList)
         } else {
             PantryTypeExpanded(
-                pantryItemsMap = pantryItemsMap,
+                pantryItemsList = pantryItemsList,
                 onItemClicked = onItemClicked,
                 onEditIconClicked = onEditIconClicked,
                 onDeleteIconClicked = onDeleteIconClicked,
@@ -127,16 +126,17 @@ fun PantryType(
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun PantryTypeCollapsed(pantryItemsMap: Map<PantryItemUiState, IngredientEntity>) {
+private fun PantryTypeCollapsed(pantryItemsList: List<PantryItemUiState>) {
     Row(verticalAlignment = Alignment.Bottom, modifier = Modifier.horizontalScroll(rememberScrollState())) {
 
         //move to model later
-        val tmp: MutableMap<IngredientEntity, Int> = mutableMapOf()
-        pantryItemsMap.forEach { (pantryItemUiState, ingredient) ->
-            tmp[ingredient] = (tmp[ingredient] ?: 0) + 1
+        val tmp: MutableMap<Ingredient, Int> = mutableMapOf()
+
+        pantryItemsList.forEach {
+            tmp[it.pantryItem.ingredient] = (tmp[it.pantryItem.ingredient] ?: 0) + 1
         }
         tmp.forEach { (ingredient, amount) ->
-            ElevatedChipPantryItem(ingredientEntity = ingredient, amount = amount)
+            ElevatedChipPantryItem(ingredient = ingredient, amount = amount)
         }
     }
 }
@@ -144,7 +144,7 @@ private fun PantryTypeCollapsed(pantryItemsMap: Map<PantryItemUiState, Ingredien
 
 @Composable
 fun PantryTypeExpanded(
-    pantryItemsMap: Map<PantryItemUiState, IngredientEntity>,
+    pantryItemsList: List<PantryItemUiState>,
     onItemClicked: (PantryItemUiState) -> Unit,
     onEditIconClicked: (PantryItemUiState) -> Unit,
     onDeleteIconClicked: (PantryItemUiState) -> Unit,
@@ -153,10 +153,10 @@ fun PantryTypeExpanded(
     onUpdateIconClicked: (PantryItemUiState) -> Unit
 ) {
     Column {
-        pantryItemsMap.forEach { (pantryItemUiState, ingredient) ->
+
+        pantryItemsList.forEach {
             PantryItem(
-                item = pantryItemUiState,
-                ingredientEntity = ingredient,
+                item = it,
                 onItemClicked = onItemClicked,
                 onAddIconClicked = { },
                 onEditIconClicked = onEditIconClicked,
@@ -205,7 +205,7 @@ fun PantryItemPrev() {
 @Preview (showBackground = true)
 @Composable
 fun ElevatedChipPantryItemPrev() {
-    ElevatedChipPantryItem(IngredientEntity(1, "aaa", "aa", "aa", "aa"), 1)
+    ElevatedChipPantryItem(Ingredient(1, "aaa", "aa", "aa", "aa"), 1)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -240,7 +240,7 @@ fun ElevatedCardPantryItem() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ElevatedChipPantryItem(ingredientEntity: IngredientEntity, amount: Int) {
+fun ElevatedChipPantryItem(ingredient: Ingredient, amount: Int) {
     BadgedBox(
         badge = {
             Badge (modifier = Modifier.padding(0.dp)) {
@@ -255,6 +255,6 @@ fun ElevatedChipPantryItem(ingredientEntity: IngredientEntity, amount: Int) {
         }, modifier = Modifier
             .padding(top = 15.dp, end = 15.dp)
     ) {
-        ElevatedAssistChip(onClick = { /*TODO*/ }, { Text(text = ingredientEntity.ingredient_name)})
+        ElevatedAssistChip(onClick = { /*TODO*/ }, { Text(text = ingredient.ingredient_name)})
     }
 }

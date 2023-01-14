@@ -15,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.foodapp.data.IngredientEntity
 import com.example.foodapp.model.PantryItemUiState
 import com.example.foodapp.model.Units
 import java.util.*
@@ -27,7 +26,6 @@ fun CheckoutScreen(){
 @Composable
 fun PantryItem(
     item: PantryItemUiState,
-    ingredientEntity: IngredientEntity,
     onItemClicked: (PantryItemUiState) -> Unit,
     onAddIconClicked: (PantryItemUiState) -> Unit,
     onEditIconClicked: (PantryItemUiState) -> Unit,
@@ -39,7 +37,6 @@ fun PantryItem(
 ) {
     if (item.isPantryEdited) EditablePantryItem(
         item = item,
-        ingredientEntity = ingredientEntity,
         onItemClicked = {},
         onAddIconClicked = onAddIconClicked,
         onEditIconClicked = onEditIconClicked,
@@ -60,7 +57,6 @@ fun PantryItem(
         )
         else ExpandedPantryItem(
             item = item,
-            ingredientEntity = ingredientEntity,
             onItemClicked = onItemClicked,
             onAddIconClicked = onAddIconClicked,
             onEditIconClicked = onEditIconClicked,
@@ -89,7 +85,7 @@ fun CollapsedPantryItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = item.pantryEntity.item_name,
+            text = item.pantryItem.name,
             style = MaterialTheme.typography.titleMedium
         )
         Row(modifier = Modifier) {
@@ -118,7 +114,6 @@ fun CollapsedPantryItem(
 @Composable
 fun ExpandedPantryItem(
     item: PantryItemUiState,
-    ingredientEntity: IngredientEntity,
     onItemClicked: (PantryItemUiState) -> Unit,
     onAddIconClicked: (PantryItemUiState) -> Unit,
     onEditIconClicked: (PantryItemUiState) -> Unit,
@@ -137,7 +132,7 @@ fun ExpandedPantryItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = ingredientEntity.ingredient_name, style = MaterialTheme.typography.labelLarge)
+            Text(text = item.pantryItem.ingredient.ingredient_name, style = MaterialTheme.typography.labelLarge)
             Row(modifier = Modifier) {
                 IconButton(onClick = { onAddIconClicked(item) }) {
                     Icon(
@@ -165,9 +160,9 @@ fun ExpandedPantryItem(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
-                Text(text = item.pantryEntity.item_name, style = MaterialTheme.typography.titleMedium)
+                Text(text = item.pantryItem.name, style = MaterialTheme.typography.titleMedium)
                 Text(
-                    text = item.pantryEntity.quantity.toString() + " " + item.pantryEntity.unit,
+                    text = item.pantryItem.quantity.toString() + " " + item.pantryItem.unit,
                     style = MaterialTheme.typography.labelSmall
                 )
                 Divider(modifier = Modifier.padding(top = 5.dp, bottom = 5.dp))
@@ -177,7 +172,7 @@ fun ExpandedPantryItem(
                         modifier = Modifier.weight(1f),
                         style = MaterialTheme.typography.titleSmall
                     )
-                    Text(text = item.pantryEntity.place_date.toString(), modifier = Modifier.weight(3f))
+                    Text(text = item.pantryItem.placeDate.toString(), modifier = Modifier.weight(3f))
                 }
 
                 Row(modifier = Modifier) {
@@ -186,7 +181,7 @@ fun ExpandedPantryItem(
                         modifier = Modifier.weight(1f),
                         style = MaterialTheme.typography.titleSmall
                     )
-                    Text(text = item.pantryEntity.expire_date.toString(), modifier = Modifier.weight(3f))
+                    Text(text = item.pantryItem.expireDate.toString(), modifier = Modifier.weight(3f))
                 }
             }
         }
@@ -197,7 +192,6 @@ fun ExpandedPantryItem(
 @Composable
 fun EditablePantryItem(
     item: PantryItemUiState,
-    ingredientEntity: IngredientEntity,
     onItemClicked: (PantryItemUiState) -> Unit,
     onAddIconClicked: (PantryItemUiState) -> Unit,
     onEditIconClicked: (PantryItemUiState) -> Unit,
@@ -216,7 +210,6 @@ fun EditablePantryItem(
     ) {
         ExpandedPantryItem(
             item = item,
-            ingredientEntity = ingredientEntity,
             onAddIconClicked = onAddIconClicked,
             onEditIconClicked = onEditIconClicked,
             onItemClicked = onItemClicked,
