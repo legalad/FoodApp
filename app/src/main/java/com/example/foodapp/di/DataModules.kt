@@ -7,6 +7,7 @@ import com.example.foodapp.data.source.local.FoodAppDatabase
 import com.example.foodapp.data.source.local.IngredientLocalDataSource
 import com.example.foodapp.data.source.local.PantryLocalDataSource
 import com.example.foodapp.data.source.remote.IngredientRemoteDataSource
+import com.example.foodapp.data.source.remote.api.FoodApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -60,7 +61,12 @@ object DataSourceModule {
     @Singleton
     @RemoteIngredientDataSource
     @Provides
-    fun provideIngredientRemoteDataSource(): IngredientDataSource = IngredientRemoteDataSource
+    fun provideIngredientRemoteDataSource(
+        foodApiService: FoodApiService,
+        @IODispatcher ioDispatcher: CoroutineDispatcher
+    ): IngredientDataSource {
+        return IngredientRemoteDataSource(foodApiService, ioDispatcher)
+    }
 
     @Singleton
     @LocalIngredientDataSource

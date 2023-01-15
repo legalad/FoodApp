@@ -2,6 +2,9 @@ package com.example.foodapp.data.utils
 
 import com.example.foodapp.data.IngredientEntity
 import com.example.foodapp.data.PantryEntity
+import com.example.foodapp.data.source.remote.RemoteIngredient
+import com.example.foodapp.data.source.remote.RemotePantryItem
+import com.example.foodapp.data.source.remote.RemotePantryItemRequest
 import com.example.foodapp.model.Ingredient
 import com.example.foodapp.model.IngredientUiState
 import com.example.foodapp.model.PantryItem
@@ -131,4 +134,54 @@ fun Ingredient.toPantryItem(): PantryItem {
             subGroup = subGroup
         )
     )
+}
+
+fun RemoteIngredient.toIngredient(): Ingredient {
+    return Ingredient(
+        ingredient_id = id,
+        ingredient_name = name,
+        scientific_name = scientificName,
+        group = group,
+        subGroup = subGroup
+    )
+}
+
+fun List<RemoteIngredient>.toIngredientsList(): List<Ingredient> {
+    return map { it.toIngredient() }
+}
+
+fun RemotePantryItem.toPantryItem(): PantryItem {
+    return PantryItem(
+        id = id,
+        name =name,
+        barCode = barCode,
+        //TODO
+        placeDate = Calendar.getInstance().time,
+        expireDate = Calendar.getInstance().time,
+        quantity = quantity,
+        unit = unit,
+        ingredient = remoteIngredient.toIngredient()
+    )
+}
+
+fun List<RemotePantryItem>.toPantryItemsList(): List<PantryItem> {
+    return map { it.toPantryItem() }
+}
+
+fun PantryItem.toRemotePantryItemRequest(): RemotePantryItemRequest {
+    return RemotePantryItemRequest(
+        //TODO
+        name = name,
+        barCode = barCode ?: "000",
+        placeDate = placeDate.time,
+        expireDate = expireDate.time,
+        quantity = quantity,
+        unit = unit,
+        ingredientId = ingredient.ingredient_id,
+        userId = 1
+    )
+}
+
+fun List<PantryItem>.toRemotePantryItemsList(): List<RemotePantryItemRequest>{
+    return map { it.toRemotePantryItemRequest() }
 }
