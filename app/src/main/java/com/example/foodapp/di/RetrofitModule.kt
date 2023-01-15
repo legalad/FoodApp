@@ -19,6 +19,7 @@ object RetrofitModule {
     @Provides
     fun provideBaseUrl() = Constans.BASE_URL
 
+    //TODO add authorization to interceptor
     @Singleton
     @Provides
     fun providesHttpLoggingInterceptor() = HttpLoggingInterceptor()
