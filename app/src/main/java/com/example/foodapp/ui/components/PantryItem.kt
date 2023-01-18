@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.example.foodapp.model.PantryItemUiState
 import com.example.foodapp.model.Units
 import java.util.*
@@ -340,8 +341,18 @@ fun CheckoutScreenPrev() {
     CheckoutScreen()
 }
 
-@Preview
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true)
 @Composable
 fun DatePicker() {
-    DatePicker()
+    Dialog(onDismissRequest = { /*TODO*/ }) {
+        DatePicker(
+            title = { Text(text = "Pick expire date") }, datePickerState = DatePickerState(
+                yearsRange = 2020..2025,
+                initialSelectedDateMillis = Calendar.getInstance().timeInMillis,
+                initialDisplayedMonthMillis = Calendar.getInstance().timeInMillis
+            )
+        )
+    }
+
 }
