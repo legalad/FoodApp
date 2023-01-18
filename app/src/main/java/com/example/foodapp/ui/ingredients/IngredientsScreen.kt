@@ -22,6 +22,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.foodapp.R
 import com.example.foodapp.model.IngredientUiState
 import com.example.foodapp.model.PantryItemUiState
+import com.example.foodapp.ui.components.ErrorScreen
+import com.example.foodapp.ui.components.LoadingScreen
 import com.example.foodapp.ui.components.PantryItem
 import com.example.foodapp.ui.components.SearchTextField
 
@@ -116,9 +118,26 @@ fun IngredientItem(
     }
 }
 
+@Composable
+fun IngredientsScreen(
+    viewModel: IngredientsViewModel,
+    modifier: Modifier
+){
+    when (viewModel.ingredientsScreenUiState) {
+        is IngredientsScreenUiState.Success -> IngredientsResultScreen(viewModel = viewModel)
+        is IngredientsScreenUiState.Loading -> IngredientsLoadingScreen(modifier = modifier)
+        is IngredientsScreenUiState.Error -> ErrorScreen(message = "Error occurred", modifier = modifier)
+    }
+}
+
+@Composable
+fun IngredientsLoadingScreen(modifier: Modifier){
+    LoadingScreen(modifier = modifier)
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun IngredientsScreen(viewModel: IngredientsViewModel, modifier: Modifier = Modifier) {
+fun IngredientsResultScreen(viewModel: IngredientsViewModel, modifier: Modifier = Modifier) {
 
     //consider to move this up to AddIngredientRoute(viewModel) and in only passed uiState to AddIngredientScreen with func
     val uiState by viewModel.ingredientsUiState.collectAsState()
@@ -219,7 +238,9 @@ fun AddPantryItemsScreen(
         }},
         floatingActionButtonPosition = FabPosition.Center,
         content =  { innerPadding ->
-        LazyColumn(modifier = Modifier.fillMaxWidth().padding(innerPadding)) {
+        LazyColumn(modifier = Modifier
+            .fillMaxWidth()
+            .padding(innerPadding)) {
             items(pantryItems) { item ->
                 Card(modifier = Modifier.padding(5.dp)) {
                     PantryItem(
@@ -252,5 +273,5 @@ fun TestPrev() {
 @Preview(showBackground = true)
 @Composable
 fun TestPrev2() {
-    IngredientsScreen(viewModel())
+    IngredientsResultScreen(viewModel())
 }

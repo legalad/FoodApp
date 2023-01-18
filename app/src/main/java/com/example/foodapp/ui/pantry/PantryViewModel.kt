@@ -8,11 +8,13 @@ import com.example.foodapp.model.PantryItemOperations
 import com.example.foodapp.model.PantryItemUiState
 import com.example.foodapp.ui.ingredients.IngredientTypes
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.example.foodapp.data.Result
 
 @HiltViewModel
 class PantryViewModel @Inject constructor(
@@ -22,12 +24,26 @@ class PantryViewModel @Inject constructor(
     val pantryUiState: StateFlow<PantryUiState> = _pantryUiState
 
     init {
-        viewModelScope.launch {
-             _pantryUiState.update {
-                it.copy(
-                    pantryItemsList = pantryRepository.getPantryItems().toPantryItemUiStateList()
-                )
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = pantryRepository.getPantryItems().first
+            when (result){
+                is Result.Success -> {
+                    _pantryUiState.update {
+                        it.copy(
+                            pantryItemsList = result.data.toPantryItemUiStateList()
+                        )
+                    }
+                }
+                is Result.Warning -> {
+                    _pantryUiState.update {
+                        it.copy(
+                            pantryItemsList = result.data.toPantryItemUiStateList()
+                        )
+                    }
+                }
+                is Result.Error -> ""//TODO add later screen state
             }
+
         }
     }
 

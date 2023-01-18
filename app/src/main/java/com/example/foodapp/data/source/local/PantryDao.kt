@@ -24,4 +24,5 @@ interface PantryDao {
 
     @Delete(entity = PantryEntity::class)
     suspend fun deletePantryItem(item: PantryEntity)
+
 }

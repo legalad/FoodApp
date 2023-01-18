@@ -7,6 +7,7 @@ import com.example.foodapp.data.source.local.FoodAppDatabase
 import com.example.foodapp.data.source.local.IngredientLocalDataSource
 import com.example.foodapp.data.source.local.PantryLocalDataSource
 import com.example.foodapp.data.source.remote.IngredientRemoteDataSource
+import com.example.foodapp.data.source.remote.PantryRemoteDataSource
 import com.example.foodapp.data.source.remote.api.FoodApiService
 import dagger.Module
 import dagger.Provides
@@ -29,6 +30,10 @@ annotation class LocalIngredientDataSource
 @Retention(AnnotationRetention.RUNTIME)
 annotation class LocalPantryDataSource
 
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class RemotePantryDataSource
+
 @Module
 @InstallIn(SingletonComponent::class)
 object RepositoryModule {
@@ -46,10 +51,11 @@ object RepositoryModule {
     @Singleton
     @Provides
     fun providePantryRepository(
+        @RemotePantryDataSource remoteDataSource: PantryDataSource,
         @LocalPantryDataSource localDataSource: PantryDataSource,
         @IODispatcher ioDispatcher: CoroutineDispatcher
     ): PantryRepository {
-        return DefaultPantryRepository(localDataSource, ioDispatcher)
+        return DefaultPantryRepository(remoteDataSource, localDataSource, ioDispatcher)
     }
 
 }
@@ -86,6 +92,16 @@ object DataSourceModule {
         @IODispatcher ioDispatcher: CoroutineDispatcher
     ): PantryDataSource {
         return PantryLocalDataSource(database.pantryDao(), ioDispatcher)
+    }
+
+    @Singleton
+    @RemotePantryDataSource
+    @Provides
+    fun provideRemotePantryDataSource(
+        foodApiService: FoodApiService,
+        @IODispatcher ioDispatcher: CoroutineDispatcher
+    ): PantryDataSource {
+        return PantryRemoteDataSource(foodApiService, ioDispatcher)
     }
 
 

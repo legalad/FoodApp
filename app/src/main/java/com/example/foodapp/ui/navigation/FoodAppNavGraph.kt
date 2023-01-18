@@ -29,7 +29,8 @@ fun FoodAppNavGraph(
         }
         composable(FoodAppDestinations.ADD_INGREDIENT_ROUTE.name) {
             val ingredientsViewModel = hiltViewModel<IngredientsViewModel>()
-            IngredientsScreen(ingredientsViewModel)
+            //IngredientsResultScreen(ingredientsViewModel)
+            IngredientsScreen(viewModel = ingredientsViewModel, modifier = Modifier)
         }
         composable(FoodAppDestinations.PANTRY_ROUTE.name) {
             val pantryViewModel = hiltViewModel<PantryViewModel>()

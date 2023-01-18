@@ -1,6 +1,10 @@
 package com.example.foodapp.ui.ingredients
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import com.example.foodapp.data.Result
 import com.example.foodapp.data.source.IngredientRepository
 import com.example.foodapp.data.utils.*
 import com.example.foodapp.model.IngredientUiState
@@ -18,24 +22,34 @@ import javax.inject.Inject
 class IngredientsViewModel @Inject constructor(
     private val ingredientRepository: IngredientRepository
 ) : FoodAppViewModel(), PantryItemOperations {
-    private val _ingredientsUiState = MutableStateFlow(IngredientsUiState())
-    val ingredientsUiState: StateFlow<IngredientsUiState> = _ingredientsUiState
+
+    var ingredientsScreenUiState: IngredientsScreenUiState by mutableStateOf(IngredientsScreenUiState.Loading)
+        private set
+
+    private val _ingredientsUiState = MutableStateFlow(IngredientsScreenUiState.Success())
+    val ingredientsUiState: StateFlow<IngredientsScreenUiState.Success> = _ingredientsUiState
+
+
 
     init {
-        viewModelScope.launch {
-            _ingredientsUiState.update { it ->
-                it.copy(ingredientList = ingredientRepository.getIngredients().toIngredientUiStateList())
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = ingredientRepository.getIngredients().first
+            ingredientsScreenUiState = when (result) {
+                is Result.Success -> {
+                    _ingredientsUiState.update {
+                        it.copy(ingredientList = result.data.toIngredientUiStateList())
+                    }
+                    IngredientsScreenUiState.Success()
+                }
+                is Result.Warning -> {
+                    _ingredientsUiState.update {
+                        it.copy(ingredientList = result.data.toIngredientUiStateList())
+                    }
+                    IngredientsScreenUiState.Success()
+                }
+                is Result.Error -> IngredientsScreenUiState.Error("")
             }
         }
-
-        /*val ingredientList: Deferred<List<IngredientUiState>> = viewModelScope.async {
-            ingredientRepository.getIngredients().map { Mappers.fromIngredientToIngredientUiState(it) }
-        }
-        viewModelScope.launch {
-            _ingredientsUiState.update { it ->
-                it.copy(ingredientList = ingredientList.await())
-            }
-        }*/
     }
 
     fun getFilteredIngredientsList(): List<IngredientUiState> {
@@ -98,7 +112,7 @@ class IngredientsViewModel @Inject constructor(
     }
 
     fun onAddToPantryFabClicked(){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             ingredientRepository.addPantryItemList(_ingredientsUiState.value.pantryItemList.toPantryItemList())
         }
         _ingredientsUiState.update {
