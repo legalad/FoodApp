@@ -321,7 +321,10 @@ fun EditablePantryItem(
                     }
                 }
             }
-            IconButton(onClick = { onUpdateIconClicked(item) }, modifier.fillMaxWidth().wrapContentWidth(Alignment.CenterHorizontally)) {
+            IconButton(onClick = { onUpdateIconClicked(item) },
+                modifier
+                    .fillMaxWidth()
+                    .wrapContentWidth(Alignment.CenterHorizontally)) {
                 Icon(imageVector = Icons.Rounded.Done, contentDescription = "")
             }
         }
@@ -337,3 +340,8 @@ fun CheckoutScreenPrev() {
     CheckoutScreen()
 }
 
+@Preview
+@Composable
+fun DatePicker() {
+    DatePicker()
+}
