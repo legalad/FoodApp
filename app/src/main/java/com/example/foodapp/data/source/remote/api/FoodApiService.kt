@@ -19,7 +19,7 @@ interface FoodApiService : AuthenticationService {
     suspend fun getPantry(): Response<List<RemotePantryItem>>
 
     @GET("/api/v1/auth/pantry/item/{id}")
-    public suspend fun getPantryItem(@Path("id") id: Int): Response<RemoteIngredient>
+    suspend fun getPantryItem(@Path("id") id: Int): Response<RemoteIngredient>
 
     @POST("/api/v1/auth/pantry/item")
     suspend fun postPantryItem(@Body remotePantryItemRequest: RemotePantryItemRequest): Response<RemotePantryItem>
@@ -32,6 +32,6 @@ interface FoodApiService : AuthenticationService {
     suspend fun putPantryItem(@Path("id") id: Int, @Body remotePantryItemRequest: RemotePantryItemRequest): Response<RemotePantryItem>
 
     @DELETE("/api/v1/auth/pantry/item/{id}")
-    suspend fun deletePantryItem(@Path("id") id: Int): Response<String>
+    suspend fun deletePantryItem(@Path("id") id: Int): Response<RemotePantryItem>
 
 }

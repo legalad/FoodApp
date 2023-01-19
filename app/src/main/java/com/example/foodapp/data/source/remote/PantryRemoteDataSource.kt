@@ -52,8 +52,16 @@ private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
         }
     }
 
-    override suspend fun deletePantryItem(item: PantryItem) {
-        TODO("Not yet implemented")
+    override suspend fun deletePantryItem(item: PantryItem): Result<PantryItem> = withContext(ioDispatcher) {
+        return@withContext try {
+            val response = foodApiService.deletePantryItem(item.id)
+            val body = response.body()?.toPantryItem()
+            if (body is PantryItem) Result.Success(body)
+            else Result.Error(HttpException(response))
+        }
+        catch (e: Exception){
+            Result.Error(e)
+        }
     }
 
 }

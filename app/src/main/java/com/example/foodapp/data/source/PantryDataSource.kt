@@ -10,5 +10,5 @@ interface PantryDataSource {
 
     suspend fun updatePantryItem(item: PantryItem): Result<PantryItem>
 
-    suspend fun deletePantryItem(item: PantryItem)
+    suspend fun deletePantryItem(item: PantryItem): Result<PantryItem>
 }

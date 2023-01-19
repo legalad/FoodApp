@@ -72,7 +72,7 @@ class PantryViewModel @Inject constructor(
     }
 
     override fun onDeleteItemButtonClicked(item: PantryItemUiState) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             pantryRepository.deletePantryItem(item.pantryItem)
         }
     }
@@ -93,7 +93,7 @@ class PantryViewModel @Inject constructor(
 
         val tmpList = getPantryItemList()
         val tmpItem = item.copy(isPantryEdited = false, isPantryCollapsed = false ,pantryItem = item.pantryItem.copy(name = item.inputProductName, unit = item.selectedOptionText, quantity = item.sliderPosition))
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             pantryRepository.updatePantryItem(tmpItem.pantryItem)
         }
         updatePantryItemState(tmpList, item, tmpItem)

@@ -46,8 +46,14 @@ class PantryLocalDataSource internal constructor(
     }
 
 
-    override suspend fun deletePantryItem(item: PantryItem) = withContext(ioDispatcher) {
-        pantryDao.deletePantryItem(item.toPantryEntity())
+    override suspend fun deletePantryItem(item: PantryItem): Result<PantryItem> = withContext(ioDispatcher) {
+        return@withContext try {
+            pantryDao.deletePantryItem(item.toPantryEntity())
+            Result.Success(item)
+        }
+        catch (e: SQLException){
+            Result.Error(e)
+        }
     }
 
 

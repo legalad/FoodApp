@@ -54,6 +54,12 @@ class DefaultPantryRepository (
         }
     }
     override suspend fun deletePantryItem(item: PantryItem) {
-        pantryLocalDataSource.deletePantryItem(item)
+        CoroutineScope(ioDispatcher).launch {
+            when(val result = pantryRemoteDataSource.deletePantryItem(item)) {
+                is Result.Success -> pantryLocalDataSource.deletePantryItem(result.data)
+                is Result.Warning -> ""
+                is Result.Error -> pantryLocalDataSource.deletePantryItem(item)
+            }
+        }
     }
 }
